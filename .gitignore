@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+results/*
+!results/.gitkeep
+data/
+*.log
+.ipynb_checkpoints/
+.vscode/
+.idea/

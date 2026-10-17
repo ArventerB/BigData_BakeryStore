@@ -1,0 +1,114 @@
+# Sources -> Ingestion: Kafka 3 broker (KRaft, không cần ZooKeeper) + Kafka UI + Collector API
+# Chạy:  docker compose up -d --build
+# Cổng trên máy host:
+#   Kafka   : localhost:9092, localhost:9094, localhost:9095
+#   Kafka UI: http://localhost:8080
+#   Collector API: http://localhost:8000/docs
+
+x-kafka-common: &kafka-common
+  image: apache/kafka:3.8.0
+  restart: unless-stopped
+  environment: &kafka-env
+    CLUSTER_ID: "4L6g3nShT-eMCtK--X86sw"
+    KAFKA_PROCESS_ROLES: "broker,controller"
+    KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+    KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+    KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+    KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+    KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+    KAFKA_MIN_INSYNC_REPLICAS: 2
+    KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    KAFKA_LOG_RETENTION_HOURS: 168
+    KAFKA_HEAP_OPTS: "-Xms512m -Xmx1g"
+  healthcheck:
+    test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:19092 > /dev/null 2>&1"]
+    interval: 10s
+    timeout: 10s
+    retries: 12
+    start_period: 20s
+
+services:
+  kafka1:
+    <<: *kafka-common
+    container_name: kafka1
+    ports: ["9092:9092"]
+    environment:
+      <<: *kafka-env
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENERS: "PLAINTEXT://:19092,CONTROLLER://:9093,PLAINTEXT_HOST://:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka1:19092,PLAINTEXT_HOST://localhost:9092"
+    volumes: ["kafka1-data:/var/lib/kafka/data"]
+
+  kafka2:
+    <<: *kafka-common
+    container_name: kafka2
+    ports: ["9094:9094"]
+    environment:
+      <<: *kafka-env
+      KAFKA_NODE_ID: 2
+      KAFKA_LISTENERS: "PLAINTEXT://:19092,CONTROLLER://:9093,PLAINTEXT_HOST://:9094"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka2:19092,PLAINTEXT_HOST://localhost:9094"
+    volumes: ["kafka2-data:/var/lib/kafka/data"]
+
+  kafka3:
+    <<: *kafka-common
+    container_name: kafka3
+    ports: ["9095:9095"]
+    environment:
+      <<: *kafka-env
+      KAFKA_NODE_ID: 3
+      KAFKA_LISTENERS: "PLAINTEXT://:19092,CONTROLLER://:9093,PLAINTEXT_HOST://:9095"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka3:19092,PLAINTEXT_HOST://localhost:9095"
+    volumes: ["kafka3-data:/var/lib/kafka/data"]
+
+  # Tạo topic một lần rồi thoát (idempotent: --if-not-exists)
+  init-topics:
+    image: apache/kafka:3.8.0
+    container_name: init-topics
+    depends_on:
+      kafka1: { condition: service_healthy }
+      kafka2: { condition: service_healthy }
+      kafka3: { condition: service_healthy }
+    volumes: ["./scripts/create_topics.sh:/create_topics.sh:ro"]
+    environment:
+      BOOTSTRAP: "kafka1:19092,kafka2:19092,kafka3:19092"
+      TOPIC_PREFIX: "${TOPIC_PREFIX:-shop}"
+      PARTITIONS: "${PARTITIONS:-6}"
+    entrypoint: ["bash", "/create_topics.sh"]
+    restart: "no"
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    container_name: kafka-ui
+    depends_on:
+      kafka1: { condition: service_healthy }
+    ports: ["8080:8080"]
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "ingestion-cluster"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka1:19092,kafka2:19092,kafka3:19092"
+    restart: unless-stopped
+
+  collector:
+    build: ./collector
+    container_name: collector
+    depends_on:
+      init-topics: { condition: service_completed_successfully }
+    ports: ["8000:8000"]
+    environment:
+      KAFKA_BOOTSTRAP: "kafka1:19092,kafka2:19092,kafka3:19092"
+      TOPIC_PREFIX: "${TOPIC_PREFIX:-shop}"
+      PRODUCER_ACKS: "${PRODUCER_ACKS:-all}"
+      PRODUCER_LINGER_MS: "${PRODUCER_LINGER_MS:-10}"
+      PRODUCER_BATCH_SIZE: "${PRODUCER_BATCH_SIZE:-65536}"
+      PRODUCER_COMPRESSION: "${PRODUCER_COMPRESSION:-lz4}"
+      CORS_ORIGINS: "${CORS_ORIGINS:-*}"
+    restart: unless-stopped
+
+volumes:
+  kafka1-data:
+  kafka2-data:
+  kafka3-data:
