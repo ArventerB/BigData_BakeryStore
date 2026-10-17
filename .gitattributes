@@ -1,2 +1,0 @@
-# Script chạy trong container Linux phải giữ LF, nếu không bash báo lỗi '\r'
-*.sh text eol=lf

@@ -1,2 +1,0 @@
-confluent-kafka==2.6.1
-matplotlib==3.9.3
