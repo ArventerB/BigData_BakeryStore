@@ -87,3 +87,4 @@
 | **Khả năng tự phục hồi (Self-Healing)** | Tự động đồng bộ lại | Đồng bộ 100% sau 5 giây | **ĐẠT** |
 
 **Kết luận chung:** Kiến trúc 3 Broker KRaft kết hợp bộ cấu hình Producer (`acks='all'`, `min.insync.replicas=2`) đã đáp ứng trọn vẹn yêu cầu vận hành liên tục 24/7 của một hệ thống thương mại điện tử / tiệm bánh, đảm bảo độ tin cậy tuyệt đối cho dữ liệu giao dịch.
+
