@@ -7,3 +7,6 @@ env/
 venv/
 *.log
 
+.pytest_cache/
+# tập dữ liệu sinh bởi simulator (có thể vài GB), không commit
+data/

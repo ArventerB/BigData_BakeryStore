@@ -31,7 +31,7 @@ Code tham khảo nằm ở nhánh `mau`. Nhánh `main` là nơi nhóm tự làm.
 - [ ] **Cả nhóm** – Liên hệ nhóm Ingestion → Storage để thống nhất data contract
 - [x] **TV1** – Cài Docker Desktop, dựng Kafka (3 broker) + Kafka UI, tạo topic
 - [ ] **TV2** – Dựng khung Collector API, endpoint nhận event
-- [ ] **TV3** – Viết simulator bản đầu (sinh event theo phiên người dùng)
+- [x] **TV3** – Viết simulator bản đầu (sinh event theo phiên người dùng)
 - [ ] **TV4** – Viết consumer đọc topic, in log
 - [ ] **TV5** – Viết Chương 1 (Giới thiệu), Chương 2 (Cơ sở lý thuyết Kafka/streaming)
 - [ ] **Mốc 1 (25/10):** chạy được simulator → API → Kafka → consumer
@@ -40,7 +40,7 @@ Code tham khảo nằm ở nhánh `mau`. Nhánh `main` là nơi nhóm tự làm.
 
 - [ ] **TV2** – Gắn tracking vào web tiệm bánh thật, backend gửi đơn hàng/thanh toán
 - [ ] **TV2** – Kiểm tra dữ liệu lỗi, đẩy sang topic DLQ
-- [ ] **TV3** – Thêm dữ liệu bẩn, kịch bản giờ cao điểm, sinh tập dữ liệu lớn
+- [x] **TV3** – Thêm dữ liệu bẩn, kịch bản giờ cao điểm, sinh tập dữ liệu lớn
 - [ ] **TV4** – Đo throughput, latency, consumer lag, đếm mất/trùng
 - [x] **TV1** – Kiểm tra replication, cấu hình producer (`acks`, `linger.ms`, nén)
 - [ ] **TV5** – Viết Chương 3 (Dữ liệu), Chương 4 (Thiết kế), Chương 5 (Cài đặt)

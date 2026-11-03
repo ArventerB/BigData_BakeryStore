@@ -1,0 +1,3 @@
+confluent-kafka==2.6.1
+httpx==0.28.1
+# chạy test: pip install pytest && python -m pytest simulator/tests

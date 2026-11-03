@@ -1,0 +1,53 @@
+{
+  "_note": "Danh mục và hành vi khách của tiệm bánh. Đổi file này để đổi miền dữ liệu mà không cần sửa code. product_id nên trùng với DB của web tiệm bánh.",
+  "stores": ["HCM-Q1", "HCM-Q3", "HCM-Q5", "HCM-Q7", "HCM-TD", "HN-HK", "DN-HC"],
+  "pages": ["/", "/menu", "/promotions", "/cart", "/account", "/stores", "/blog"],
+  "_search_note": "Từ khoá -> danh mục khách muốn tìm. Generator thêm hậu tố, bỏ dấu, gõ sai để có văn bản tự do giống người thật.",
+  "search_terms": {"bánh kem": "banh_kem", "bánh sinh nhật": "banh_kem", "tiramisu": "banh_kem", "bánh kem dâu": "banh_kem",
+                   "bánh mì": "banh_mi", "croissant": "banh_mi", "bánh mì hoa cúc": "banh_mi",
+                   "bông lan trứng muối": "banh_ngot", "mousse": "banh_ngot", "bánh su kem": "banh_ngot",
+                   "cookie": "cookie", "bánh quy bơ": "cookie", "bánh trung thu": "banh_trung_thu",
+                   "cà phê": "do_uong", "trà đào": "do_uong"},
+  "search_modifiers": ["", "", "", "", " giá rẻ", " gần đây", " size 20cm", " cho bé", " ship nhanh", " ít ngọt", " khuyến mãi", " q1"],
+  "vouchers": {"FREESHIP": 0.0, "SINHNHAT10": 0.10, "MEMBER5": 0.05, "TRUNGTHU20": 0.20},
+  "_campaign_note": "Nguồn truy cập của phiên (ghi vào URL trang đầu dạng utm). direct = khách tự vào. intent = hệ số khả năng mua, interest = danh mục chiến dịch quảng cáo. Khách đến từ chiến dịch có voucher thì hay dùng voucher đó.",
+  "campaigns": [
+    {"source": "direct", "intent": 1.0, "weight": 0.45},
+    {"source": "google", "medium": "organic", "intent": 1.2, "weight": 0.18},
+    {"source": "facebook", "medium": "cpc", "campaign": "banh-kem-sinh-nhat", "voucher": "SINHNHAT10", "landing": "/promotions", "interest": "banh_kem", "intent": 1.3, "weight": 0.14},
+    {"source": "tiktok", "medium": "video", "campaign": "trend-croissant", "landing": "/menu", "interest": "banh_mi", "intent": 0.6, "weight": 0.1},
+    {"source": "zalo", "medium": "oa", "campaign": "member-day", "voucher": "MEMBER5", "landing": "/promotions", "intent": 1.4, "weight": 0.08},
+    {"source": "email", "medium": "newsletter", "campaign": "freeship-cuoi-tuan", "voucher": "FREESHIP", "landing": "/promotions", "intent": 1.1, "weight": 0.05}
+  ],
+  "payment_methods": {"cash": 0.2, "card": 0.15, "momo": 0.3, "zalopay": 0.15, "vnpay": 0.1, "bank_transfer": 0.1},
+  "payment_fail_rate": {"cash": 0.01, "card": 0.12, "momo": 0.05, "zalopay": 0.06, "vnpay": 0.09, "bank_transfer": 0.07},
+  "products": [
+    {"product_id": "BK001", "name": "Bánh kem dâu 16cm", "category": "banh_kem", "price": 280000},
+    {"product_id": "BK002", "name": "Bánh kem socola 20cm", "category": "banh_kem", "price": 390000},
+    {"product_id": "BK003", "name": "Bánh kem tiramisu", "category": "banh_kem", "price": 350000},
+    {"product_id": "BM001", "name": "Bánh mì hoa cúc", "category": "banh_mi", "price": 65000},
+    {"product_id": "BM002", "name": "Bánh mì sandwich", "category": "banh_mi", "price": 35000},
+    {"product_id": "BM003", "name": "Croissant bơ", "category": "banh_mi", "price": 32000},
+    {"product_id": "BN001", "name": "Bông lan trứng muối", "category": "banh_ngot", "price": 55000},
+    {"product_id": "BN002", "name": "Bánh su kem (hộp 6)", "category": "banh_ngot", "price": 48000},
+    {"product_id": "BN003", "name": "Mousse chanh dây", "category": "banh_ngot", "price": 45000},
+    {"product_id": "CK001", "name": "Cookie bơ (hộp)", "category": "cookie", "price": 120000},
+    {"product_id": "CK002", "name": "Cookie socola chip", "category": "cookie", "price": 95000},
+    {"product_id": "TT001", "name": "Bánh trung thu thập cẩm", "category": "banh_trung_thu", "price": 85000},
+    {"product_id": "TT002", "name": "Bánh trung thu đậu xanh", "category": "banh_trung_thu", "price": 75000},
+    {"product_id": "DU001", "name": "Cà phê sữa đá", "category": "do_uong", "price": 35000},
+    {"product_id": "DU002", "name": "Trà đào cam sả", "category": "do_uong", "price": 45000}
+  ],
+  "_hourly_traffic_note": "Hệ số lưu lượng theo giờ trong ngày (giờ Việt Nam, 0h..23h), 1.0 = trung bình. Cao điểm sáng (bánh mì, cà phê), trưa, và tối (bánh kem, đặt bánh sinh nhật).",
+  "hourly_traffic": [0.15, 0.08, 0.05, 0.05, 0.08, 0.3, 0.9, 1.6, 1.7, 1.1, 0.9, 1.3,
+                     1.5, 1.1, 0.8, 0.8, 1.0, 1.5, 1.9, 2.1, 1.8, 1.3, 0.8, 0.4],
+  "_category_boost_note": "Hệ số nhân xác suất chọn danh mục theo khung giờ: sáng 5-10h, trưa 10-14h, chiều 14-17h, tối 17-24h, đêm 0-5h.",
+  "category_boost": {
+    "morning":   {"banh_mi": 3.0, "do_uong": 2.5},
+    "noon":      {"banh_mi": 1.5, "do_uong": 2.0, "banh_ngot": 1.5},
+    "afternoon": {"banh_ngot": 2.0, "cookie": 1.5, "do_uong": 1.5},
+    "evening":   {"banh_kem": 3.0, "banh_ngot": 1.3},
+    "night":     {"cookie": 1.5, "banh_kem": 1.5}
+  },
+  "weekend_traffic": 1.35
+}

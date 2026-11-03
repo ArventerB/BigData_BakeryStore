@@ -1,0 +1,321 @@
+{
+  "dataset": "data\\dataset_oct2026",
+  "profiled_in_sec": 488.6,
+  "volume": {
+    "events": 19012828,
+    "valid_events": 18633290,
+    "sessions": 3268743,
+    "distinct_users": 1366583,
+    "members_seen": 549358,
+    "guests_seen": 817225,
+    "raw_mb": 5261.0,
+    "file_mb": 877.2,
+    "compression_ratio": 6.0,
+    "days": 30,
+    "avg_event_bytes": 290
+  },
+  "velocity": {
+    "time_span_hours": 725.2,
+    "avg_events_per_sec": 7.14,
+    "peak_minute": "2026-10-25 19:28",
+    "peak_minute_events_per_sec": 22.85,
+    "peak_hour_vn": 19,
+    "quietest_hour_vn": 2,
+    "peak_to_quiet_ratio": 36.2,
+    "events_by_hour_vn": [
+      125737,
+      67616,
+      46164,
+      48193,
+      71832,
+      245445,
+      714230,
+      1267795,
+      1359395,
+      888979,
+      730815,
+      1033123,
+      1200624,
+      893939,
+      653027,
+      648756,
+      805163,
+      1197709,
+      1511302,
+      1673149,
+      1439730,
+      1042835,
+      642398,
+      325334
+    ],
+    "late_or_out_of_order_events": 170565
+  },
+  "variety": {
+    "event_types": {
+      "page_view": 4695799,
+      "product_view": 7896681,
+      "search": 2369793,
+      "add_to_cart": 2246968,
+      "checkout_start": 564658,
+      "order_placed": 395560,
+      "payment": 407773,
+      "remove_from_cart": 56058
+    },
+    "distinct_schemas": 8,
+    "schemas": [
+      "add_to_cart: category, device, price, product_id, quantity",
+      "checkout_start: device",
+      "order_placed: delivery_type, device, items, order_id, store_id, total_amount, voucher",
+      "page_view: device, page",
+      "payment: amount, device, order_id, payment_method, status",
+      "product_view: category, device, page, price, product_id",
+      "remove_from_cart: category, device, price, product_id, quantity",
+      "search: device, search_query"
+    ],
+    "nested_array_field": "order_placed.items[] (product_id, category, unit_price, quantity)",
+    "file_formats": [
+      "JSON Lines nén gzip (event)",
+      "CSV (bảng dim)",
+      "JSON (manifest)"
+    ],
+    "dim_tables": {
+      "dim/products.csv": 15,
+      "dim/stores.csv": 7,
+      "dim/customers.csv": 562500
+    },
+    "sources": {
+      "app": 10248487,
+      "web": 8384803
+    },
+    "devices": {
+      "mobile": 13603500,
+      "desktop": 4188760,
+      "tablet": 841030
+    },
+    "traffic_channels": {
+      "direct": 1473240,
+      "zalo": 257953,
+      "tiktok": 320635,
+      "google": 579859,
+      "facebook": 451344,
+      "email": 161108
+    },
+    "distinct_search_queries": 7550,
+    "search_queries_without_accents_pct": 45.1,
+    "search_examples": [
+      "cookie",
+      "bánh trung thu cho bé",
+      "mousse khuyến mãi",
+      "tiramisu khuyến mãi",
+      "banh kem dau it ngot",
+      "bong lan trung muoi it ngot",
+      "tiramisu gan day",
+      "COOKIE Q1",
+      "BÁNH MÌ Q1",
+      "BÁNH TRUNG THU GIÁ RẺ"
+    ]
+  },
+  "veracity": {
+    "invalid_events": 379538,
+    "invalid_pct": 2.0,
+    "detected_by_reason": {
+      "schema_violation": 207029,
+      "not_an_object": 34480,
+      "unknown_event_type": 34496,
+      "missing_timezone": 34541,
+      "duplicate_event_id": 34467,
+      "event_time_in_future": 34525
+    },
+    "injected_by_reason": {
+      "schema_violation": 207029,
+      "duplicate_event_id": 34467,
+      "not_an_object": 34480,
+      "event_time_in_future": 34525,
+      "unknown_event_type": 34496,
+      "missing_timezone": 34541
+    },
+    "detection_matches_injection": true,
+    "late_sessions_injected": 32924
+  },
+  "value": {
+    "funnel_sessions": {
+      "page_view": 3244139,
+      "product_view": 2290548,
+      "add_to_cart": 1424337,
+      "checkout_start": 564658,
+      "order_placed": 395560,
+      "payment_success": 376289
+    },
+    "funnel_pct_of_sessions": {
+      "page_view": 99.25,
+      "product_view": 70.07,
+      "add_to_cart": 43.57,
+      "checkout_start": 17.27,
+      "order_placed": 12.1,
+      "payment_success": 11.51
+    },
+    "orders": 395560,
+    "paid_orders": 376289,
+    "revenue_vnd": 126762375100,
+    "avg_order_value_vnd": 336875,
+    "revenue_by_category": [
+      [
+        "banh_kem",
+        89081015000
+      ],
+      [
+        "cookie",
+        10049123000
+      ],
+      [
+        "banh_mi",
+        8564424900
+      ],
+      [
+        "banh_ngot",
+        8147880200
+      ],
+      [
+        "banh_trung_thu",
+        5960230750
+      ],
+      [
+        "do_uong",
+        4959701250
+      ]
+    ],
+    "top_products": [
+      [
+        "BK002",
+        34214563500
+      ],
+      [
+        "BK003",
+        30496637500
+      ],
+      [
+        "BK001",
+        24369814000
+      ],
+      [
+        "CK001",
+        5583078000
+      ],
+      [
+        "CK002",
+        4466045000
+      ]
+    ],
+    "revenue_by_store": [
+      [
+        "HCM-TD",
+        19302161850
+      ],
+      [
+        "HCM-Q3",
+        19271847200
+      ],
+      [
+        "HCM-Q7",
+        19204320100
+      ],
+      [
+        "HCM-Q1",
+        19103740550
+      ],
+      [
+        "HCM-Q5",
+        19074842900
+      ],
+      [
+        "DN-HC",
+        15471369000
+      ],
+      [
+        "HN-HK",
+        15334093500
+      ]
+    ],
+    "revenue_by_channel": [
+      [
+        "direct",
+        52344061400
+      ],
+      [
+        "facebook",
+        26921935350
+      ],
+      [
+        "google",
+        23675981200
+      ],
+      [
+        "zalo",
+        12192574500
+      ],
+      [
+        "email",
+        6190848000
+      ],
+      [
+        "tiktok",
+        5436974650
+      ]
+    ],
+    "conversion_by_channel_pct": {
+      "direct": 11.24,
+      "google": 12.32,
+      "facebook": 12.86,
+      "tiktok": 7.82,
+      "zalo": 13.33,
+      "email": 11.81
+    },
+    "voucher_revenue": [
+      [
+        "(không)",
+        90684313000
+      ],
+      [
+        "SINHNHAT10",
+        17930227500
+      ],
+      [
+        "MEMBER5",
+        9840183600
+      ],
+      [
+        "FREESHIP",
+        6291427000
+      ],
+      [
+        "TRUNGTHU20",
+        2016224000
+      ]
+    ],
+    "delivery_revenue": [
+      [
+        "delivery",
+        73361237400
+      ],
+      [
+        "pickup",
+        53401137700
+      ]
+    ],
+    "payment_fail_rate_pct": {
+      "bank_transfer": 6.82,
+      "card": 11.74,
+      "cash": 0.95,
+      "momo": 5.04,
+      "vnpay": 9.06,
+      "zalopay": 6.19
+    },
+    "buyers": 297905,
+    "repeat_buyers_pct": 17.98,
+    "orders_per_buyer_by_tier": {
+      "member": 1.22,
+      "guest": 1.0,
+      "loyal": 2.51
+    }
+  }
+}
