@@ -93,3 +93,4 @@ Dữ liệu mô phỏng của tiệm bánh được phân loại thành các Top
   - Trích dẫn bảng cấu hình Producer ở Mục 4 và giải thích lý do lựa chọn `acks=all`, `linger.ms=10`, `lz4`.
 - **Đưa vào Phụ lục:**
   - Hướng dẫn khởi chạy hệ thống từ file `scripts/README.md`.
+
