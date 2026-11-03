@@ -3,6 +3,7 @@
 Dùng cho Chương 3 (Dữ liệu và yêu cầu), Chương 5 (Cài đặt) và Chương 6 (Thực nghiệm).
 Code: [`simulator/`](../simulator/). Hướng dẫn chạy: [`simulator/README.md`](../simulator/README.md).
 Báo cáo 5V đầy đủ của tập dữ liệu: `results/profile_dataset_oct2026.md` (sinh bằng `simulator/profile_dataset.py`).
+Tải tập dữ liệu đầy đủ (898 MB): <https://github.com/ArventerB/BigData_BakeryStore/releases/tag/dataset-oct2026>.
 
 ## 1. Vì sao cần simulator
 

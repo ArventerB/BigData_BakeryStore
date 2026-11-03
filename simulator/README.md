@@ -16,6 +16,22 @@ topic `bakery.user-events | bakery.orders | bakery.payments | bakery.dlq`.
 | `profile_dataset.py` | đo tập dữ liệu theo 5V, xuất báo cáo `results/profile_*.md` |
 | `tests/` | kiểm thử contract, phễu, dữ liệu bẩn, kịch bản lưu lượng, topic của TV1, 5V |
 
+## Tập dữ liệu đầy đủ
+
+Tập 30 ngày (19 triệu event, 5,26 GB JSON / 898 MB zip) nằm ở GitHub Release, không nằm trong repo cho nhẹ:
+<https://github.com/ArventerB/BigData_BakeryStore/releases/tag/dataset-oct2026>
+
+```bash
+# tải về và giải nén vào data/ (Windows 10+ có sẵn curl và tar)
+curl -L -o data/dataset_oct2026.zip \
+  https://github.com/ArventerB/BigData_BakeryStore/releases/download/dataset-oct2026/dataset_oct2026.zip
+tar -xf data/dataset_oct2026.zip -C data
+python simulator/profile_dataset.py data/dataset_oct2026     # kiểm tra lại: phải ra đúng results/profile_dataset_oct2026.md
+```
+
+Bên trong có `date=YYYY-MM-DD/events.jsonl.gz` (event theo ngày), `dim/*.csv` và `manifest.json`.
+Không tải được thì sinh lại bằng lệnh "Tập dữ liệu lớn" ở mục dưới; nhờ `--seed 2026` nên dữ liệu ra giống hệt từng byte.
+
 ## Cài đặt
 
 ```bash
