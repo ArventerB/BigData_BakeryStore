@@ -19,7 +19,7 @@ Code tham khảo nằm ở nhánh `mau`. Nhánh `main` là nơi nhóm tự làm.
 
 | Thành viên | Họ tên – MSSV | Vai trò |
 |---|---|---|
-| TV1 | | Nhóm trưởng, hạ tầng Kafka |
+| TV1 | | hạ tầng Kafka |
 | TV2 | | Collector API, tích hợp web tiệm bánh |
 | TV3 | | Simulator, dữ liệu |
 | TV4 | | Đo lường, thí nghiệm |
