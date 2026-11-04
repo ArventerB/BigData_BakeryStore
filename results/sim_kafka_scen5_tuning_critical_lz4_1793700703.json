@@ -1,0 +1,37 @@
+{
+  "tag": "scen5_tuning_critical_lz4",
+  "name": "Critical Orders (acks=all, 64KB, lz4)",
+  "timestamp": 1793700703,
+  "scenario_id": 5,
+  "group": "producer_tuning",
+  "topic": "bakery.bench.p3",
+  "config": {
+    "id": 5,
+    "tag": "scen5_tuning_critical_lz4",
+    "name": "Critical Orders (acks=all, 64KB, lz4)",
+    "group": "producer_tuning",
+    "topic": "bakery.bench.p3",
+    "workers": 2,
+    "acks": "all",
+    "batch_size": 65536,
+    "linger_ms": 10,
+    "compression": "lz4",
+    "description": "Cấu hình chuẩn cho đơn hàng: acks=all bảo đảm Zero Data Loss, nén LZ4"
+  },
+  "sent_total": 196583,
+  "records_total": 196583,
+  "duration_sec": 10,
+  "throughput_eps": 19658.3,
+  "avg_consume_eps": 19658.3,
+  "ack_latency_ms": {
+    "p50": 2.28,
+    "p95": 3.8,
+    "p99": 5.7
+  },
+  "e2e_latency_ms": {
+    "p50": 2.28,
+    "p95": 3.8,
+    "p99": 5.7
+  },
+  "per_second_csv": "results\\consumer_scen5_tuning_critical_lz4_1793700703.csv"
+}
