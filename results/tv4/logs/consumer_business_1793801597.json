@@ -1,0 +1,28 @@
+{
+  "tag": "business",
+  "timestamp": 1793801597,
+  "started_at": "2026-11-04T14:13:17.901371+00:00",
+  "topics": [
+    "bakery.user-events",
+    "bakery.orders",
+    "bakery.payments"
+  ],
+  "records_total": 3599990,
+  "records_by_topic": {
+    "bakery.user-events": 3444716,
+    "bakery.orders": 76446,
+    "bakery.payments": 78828
+  },
+  "unique_event_ids": 3582072,
+  "duplicate_event_ids": 17918,
+  "late_events": 0,
+  "dlq_by_reason": {},
+  "elapsed_sec": 47.9,
+  "avg_consume_eps": 75199.2,
+  "e2e_latency_ms": {
+    "p50": 1317579.6,
+    "p95": 1677487.2,
+    "p99": 1784751.8
+  },
+  "per_second_csv": "results\\consumer_business_1793801597.csv"
+}

@@ -1,0 +1,10 @@
+[20:36:44] Cụm Kafka: broker [1, 2, 3] | bootstrap localhost:9092,localhost:9094,localhost:9096
+[20:36:44] Lặp 2 lần | 30s mỗi lần | log: results\tv4\logs\run_20261104_203644_fault.log
+[20:36:44] ▶ p3_w2_acksall_b64k_l10_lz4_5k_fault_acksall | lần 1 | E9_fault | đĩa trống 11.2 GB
+[20:38:21]   ✓      4,999 eps | ack p95 3827.7 ms | e2e p95 4000.03 ms | gửi 449,938 nhận 449,938 mất 0 trùng 0 lỗi 0 | nén 2.52x | CPU 24.4%
+[20:38:21] ▶ p3_w2_acks1_b64k_l10_lz4_5k_fault_acks1 | lần 1 | E9_fault | đĩa trống 11.2 GB
+[20:39:58]   ✓      4,999 eps | ack p95 18.91 ms | e2e p95 3696.02 ms | gửi 449,944 nhận 449,944 mất 0 trùng 0 lỗi 0 | nén 2.49x | CPU 21.6%
+[20:39:58] ▶ p3_w2_acksall_b64k_l10_lz4_5k_fault_acksall | lần 2 | E9_fault | đĩa trống 11.2 GB
+[20:41:35]   ✓      5,000 eps | ack p95 3692.29 ms | e2e p95 4178.87 ms | gửi 449,986 nhận 449,986 mất 0 trùng 0 lỗi 0 | nén 2.53x | CPU 22.8%
+[20:41:35] ▶ p3_w2_acks1_b64k_l10_lz4_5k_fault_acks1 | lần 2 | E9_fault | đĩa trống 11.2 GB
+[20:43:11]   ✓      5,000 eps | ack p95 21.03 ms | e2e p95 8316.55 ms | gửi 449,988 nhận 449,988 mất 0 trùng 0 lỗi 0 | nén 2.5x | CPU 19.1%

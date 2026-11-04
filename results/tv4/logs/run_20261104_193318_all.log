@@ -1,0 +1,4 @@
+[19:33:18] Cụm Kafka: broker [1, 2, 3] | bootstrap localhost:9092,localhost:9094,localhost:9096
+[19:33:18] Lặp 3 lần | 15.0s mỗi lần | log: results\tv4\logs\run_20261104_193318_all.log
+[19:33:18] 30 cấu hình khác nhau × 3 lần = 90 lần chạy
+[19:33:18] ▶ warmup_p6_w4_acks1_b64k_l10_lz4_max | lần 0 | warmup | đĩa trống 11.2 GB

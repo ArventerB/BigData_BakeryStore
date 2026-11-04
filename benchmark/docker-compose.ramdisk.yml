@@ -1,0 +1,31 @@
+# Override CHỈ dùng cho benchmark tốc độ tối đa của TV4 (E1–E8). KHÔNG sửa scripts/docker-compose.yml của TV1.
+#
+# Lý do: đĩa ảo Docker Desktop (docker_data.vhdx) không thu hồi chỗ trống — nó phình theo TỔNG lượng đã ghi,
+# kể cả khi Kafka đã xoá dữ liệu. Ma trận benchmark ghi hàng trăm GB nên thư mục log của 3 broker được đặt trên
+# RAM (tmpfs). Mọi cấu hình khác giữ nguyên (KRaft 3 node, RF=3, min.insync.replicas=2).
+# Dữ liệu trên tmpfs mất khi container dừng → không dùng file này cho thí nghiệm chịu lỗi / chạy dài.
+#
+# Bật:   docker compose -f scripts/docker-compose.yml -f benchmark/docker-compose.ramdisk.yml up -d
+# Trả lại cấu hình đĩa của TV1:  docker compose -f scripts/docker-compose.yml up -d   (dữ liệu cũ vẫn còn trong volume)
+services:
+  kafka-1:
+    volumes:
+      - type: tmpfs
+        target: /var/lib/kafka/data
+        tmpfs:
+          size: 2147483648   # 2 GB
+          mode: 0o1777        # broker chạy bằng appuser (uid 1000) cần quyền ghi
+  kafka-2:
+    volumes:
+      - type: tmpfs
+        target: /var/lib/kafka/data
+        tmpfs:
+          size: 2147483648
+          mode: 0o1777
+  kafka-3:
+    volumes:
+      - type: tmpfs
+        target: /var/lib/kafka/data
+        tmpfs:
+          size: 2147483648
+          mode: 0o1777

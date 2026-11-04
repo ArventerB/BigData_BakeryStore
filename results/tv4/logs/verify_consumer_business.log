@@ -1,0 +1,62 @@
+
+[Verify Consumer] Bat dau doc topics: ['bakery.user-events', 'bakery.orders', 'bakery.payments']
+ -> Bootstrap Servers: localhost:9092,localhost:9094,localhost:9096
+ -> Group ID: verify-bakery-d9c234cb
+ -> Offset Reset: earliest
+ -> Dang lang nghe message... (Ctrl+C de dung)
+
+  #1   bakery.user-events[1]@0         page_view       event_id=57ad057d-f4f0-41fc-8aca-ca4505306bb7 user=U0008017 order=- lat=1801489.2ms
+  #2   bakery.user-events[1]@1         search          event_id=202cb15a-098d-4860-9e47-caa61f684c50 user=U0008017 order=- lat=1801489.2ms
+  #3   bakery.user-events[1]@2         product_view    event_id=608f02b1-6254-43f0-aa50-f9fc5b20f1e6 user=U0008017 order=- lat=1801439.2ms
+  #4   bakery.user-events[1]@3         add_to_cart     event_id=2ef7b374-200d-42b8-8660-5afb38356e48 user=U0008017 order=- lat=1801439.2ms
+  #5   bakery.user-events[1]@4         product_view    event_id=e39f13d7-6598-4372-8e0d-ce0daf0a6148 user=U0008017 order=- lat=1801439.2ms
+  #6   bakery.user-events[1]@5         add_to_cart     event_id=8a88ce1b-46de-4eef-843f-9f5b05fb0d55 user=U0008017 order=- lat=1801439.2ms
+  #7   bakery.user-events[1]@6         search          event_id=a07481bd-f1b8-4a7c-a37f-0de050931ba9 user=U0008017 order=- lat=1801439.2ms
+  #8   bakery.user-events[1]@7         product_view    event_id=853c2409-a20c-47ac-9738-f7c743e5a40a user=U0008017 order=- lat=1801439.2ms
+  #9   bakery.user-events[1]@8         product_view    event_id=0eec8bf9-7875-442b-be28-9120fa66a3e9 user=U0008017 order=- lat=1801439.2ms
+  #10  bakery.user-events[1]@9         product_view    event_id=b50f9e6c-6629-4c24-9f29-86b2e7f29366 user=U0008017 order=- lat=1801389.2ms
+  #11  bakery.user-events[1]@10        search          event_id=dc78752d-57fb-4eeb-8698-55d2d43cc531 user=U0008017 order=- lat=1801389.2ms
+  #12  bakery.user-events[1]@11        product_view    event_id=2885f868-301a-4d12-8feb-ec7094a0df05 user=U0008017 order=- lat=1801389.2ms
+  #13  bakery.user-events[1]@12        page_view       event_id=f8993660-f690-4f31-89fa-a7fb616dd027 user=Ab2d9452ba0 order=- lat=1801389.2ms
+  #14  bakery.user-events[1]@13        product_view    event_id=5567761f-63a3-42b4-bb8a-188124530e4c user=Ab2d9452ba0 order=- lat=1801389.2ms
+  #15  bakery.user-events[1]@14        product_view    event_id=4afc59d6-e61f-4bf9-a986-a329309535be user=Ab2d9452ba0 order=- lat=1801389.2ms
+  #16  bakery.user-events[1]@15        search          event_id=bf3b9167-f9e2-47d0-b04e-74d2637c119a user=Ab2d9452ba0 order=- lat=1801389.2ms
+  #17  bakery.user-events[1]@16        product_view    event_id=2dfbc7b2-078e-4649-8425-0d88b8d3b186 user=Ab2d9452ba0 order=- lat=1801389.2ms
+  #18  bakery.user-events[1]@17        page_view       event_id=83d6877d-1ddf-42b6-a31f-0b4407466814 user=Ab2d9452ba0 order=- lat=1801339.2ms
+  #19  bakery.user-events[1]@18        product_view    event_id=4d7a6404-5e35-455f-9048-1dfa5fe2fe3e user=Ab2d9452ba0 order=- lat=1801339.2ms
+  #20  bakery.user-events[1]@19        add_to_cart     event_id=1b347334-2063-4843-bf87-175d9c2a2dc0 user=Ab2d9452ba0 order=- lat=1801339.2ms
+  #21  bakery.user-events[1]@20        product_view    event_id=4337dda6-6196-4ad7-92b8-b80dba040a94 user=Ab2d9452ba0 order=- lat=1801339.2ms
+  #22  bakery.user-events[1]@21        product_view    event_id=3f3d26be-84d9-4b12-8e3b-57101ef5d57c user=Ab2d9452ba0 order=- lat=1801339.2ms
+  #23  bakery.user-events[1]@22        page_view       event_id=4495c05b-1f8c-486d-85bd-74d18fb15a3d user=U0001099 order=- lat=1801339.2ms
+  #24  bakery.user-events[1]@23        page_view       event_id=20615b85-86cd-4ae5-9b01-02de820e8925 user=U0001893 order=- lat=1801188.2ms
+  #25  bakery.user-events[1]@24        page_view       event_id=86806efb-cbe4-480e-9371-a2738bcd0aac user=U0044698 order=- lat=1801087.2ms
+  t=    3s | Nhận= 384,625 msgs | Tốc độ≈121,000/s | p95 Latency=1348952.4 ms | Lag=3,215,365
+  t=    6s | Nhận= 738,864 msgs | Tốc độ≈110,000/s | p95 Latency=1263015.8 ms | Lag=2,861,126
+  t=    9s | Nhận=1,128,027 msgs | Tốc độ≈134,476/s | p95 Latency=1131948.2 ms | Lag=2,471,963
+  t=   12s | Nhận=1,534,027 msgs | Tốc độ≈131,000/s | p95 Latency=961597.5 ms | Lag=2,065,963
+  t=   16s | Nhận=1,934,027 msgs | Tốc độ≈110,000/s | p95 Latency=819271.6 ms | Lag=1,665,963
+  t=   19s | Nhận=2,335,027 msgs | Tốc độ≈131,000/s | p95 Latency=573877.6 ms | Lag=1,264,963
+  t=   22s | Nhận=2,742,027 msgs | Tốc độ≈137,000/s | p95 Latency=457845.9 ms | Lag=857,963
+  t=   26s | Nhận=3,140,027 msgs | Tốc độ≈113,000/s | p95 Latency=363845.7 ms | Lag=459,963
+  t=   29s | Nhận=3,538,027 msgs | Tốc độ≈125,000/s | p95 Latency=271713.6 ms | Lag=61,963
+  t=   32s | Nhận=3,599,990 msgs | Tốc độ≈    963/s | p95 Latency=40343.5 ms | Lag=     0
+  t=   35s | Nhận=3,599,990 msgs | Tốc độ≈      0/s | p95 Latency=      ms | Lag=     0
+  t=   39s | Nhận=3,599,990 msgs | Tốc độ≈      0/s | p95 Latency=      ms | Lag=     0
+  t=   42s | Nhận=3,599,990 msgs | Tốc độ≈      0/s | p95 Latency=      ms | Lag=     0
+  t=   45s | Nhận=3,599,990 msgs | Tốc độ≈      0/s | p95 Latency=      ms | Lag=     0
+[!] Idle timeout (15.0s khong co ban ghi moi). Dung consumer.
+
+============================================================
+TONG KET DO LUONG CONSUMER
+============================================================
+Tong ban ghi tieu thu: 3,599,990
+Thoi gian do:          47.9s
+Throughput trung binh: 75,199.2 eps
+End-to-End Latency:    p50 = 1317579.6 ms | p95 = 1677487.2 ms | p99 = 1784751.8 ms
+Ban ghi trung lap:     17918 (0.50%)
+Ban ghi den tre:       0
+Ban ghi DLQ:           0
+File CSV:              results\consumer_business_1793801597.csv
+File JSON:             results\consumer_business_1793801597.json
+============================================================
+

@@ -1,0 +1,13 @@
+linger_ms=0 ack_p50_p95_p99_eps= 1.17 3.6 15.39 4999.4
+linger_ms=1 ack_p50_p95_p99_eps= 3.06 14.87 17.87 4991.9
+linger_ms=2 ack_p50_p95_p99_eps= 4.38 18.32 18.97 4997.9
+linger_ms=5 ack_p50_p95_p99_eps= 17.12 18.32 18.76 4991.0
+linger_ms=10 ack_p50_p95_p99_eps= 17.05 18.34 18.86 4989.8
+linger_ms=15 ack_p50_p95_p99_eps= 17.11 30.94 33.3 4991.3
+linger_ms=16 ack_p50_p95_p99_eps= 18.28 33.8 34.38 4997.8
+linger_ms=20 ack_p50_p95_p99_eps= 18.75 34.0 34.53 4990.2
+linger_ms=31 ack_p50_p95_p99_eps= 19.52 48.2 49.29 4990.2
+linger_ms=32 ack_p50_p95_p99_eps= 21.64 48.99 49.98 4988.0
+linger_ms=47 ack_p50_p95_p99_eps= 33.73 64.08 65.24 4997.1
+linger_ms=48 ack_p50_p95_p99_eps= 34.4 65.12 66.04 4988.1
+linger_ms=50 ack_p50_p95_p99_eps= 34.99 64.96 65.87 4988.5

@@ -87,7 +87,8 @@ def run_consumer(
     duration: float = 0,
     idle_timeout: float = 0,
     sink_dir: str | None = None,
-    tag: str = ""
+    tag: str = "",
+    show: int = 0
 ) -> dict:
     group_id = group or f"verify-bakery-{uuid.uuid4().hex[:8]}"
     consumer = Consumer({
@@ -115,6 +116,7 @@ def run_consumer(
     sec_count = defaultdict(int)
     sec_lat = defaultdict(list)
     lag_samples = {}
+    shown = 0
 
     start = time.time()
     last_msg = start
@@ -155,6 +157,12 @@ def run_consumer(
                     rec = json.loads(m.value().decode("utf-8"))
                 except Exception:
                     rec = {}
+
+                if shown < show:
+                    shown += 1
+                    print(f"  #{shown:<3} {topic}[{m.partition()}]@{m.offset():<9} {rec.get('event_type', '?'):<15} "
+                          f"event_id={rec.get('event_id')} user={rec.get('user_id')} "
+                          f"order={rec.get('order_id', '-')} lat={lat:.1f}ms", flush=True)
 
                 if topic.endswith(".dlq"):
                     reason = rec.get("reason", "unknown_error")
@@ -269,6 +277,7 @@ def main():
     ap.add_argument("--idle-timeout", type=float, default=0)
     ap.add_argument("--sink", default=None)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--show", type=int, default=0, help="in chi tiết N bản ghi đầu tiên")
     args = ap.parse_args()
 
     topics = [t.strip() for t in args.topics.split(",")] if args.topics else DEFAULT_TOPICS
@@ -280,7 +289,8 @@ def main():
         duration=args.duration,
         idle_timeout=args.idle_timeout,
         sink_dir=args.sink,
-        tag=args.tag
+        tag=args.tag,
+        show=args.show
     )
 
 
