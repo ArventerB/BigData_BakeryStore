@@ -1,0 +1,216 @@
+Lưu ý: chế độ kafka bỏ qua Collector nên dữ liệu bẩn đi thẳng vào topic, không bị lọc.
+Bắt đầu: mode=kafka rate=2000.0 duration=1800.0s workers=2 profile=daily dirty=0.005
+t=   10.1s giờ ảo  0.13h  tốc độ ≈       299 ev/s  p95=553.94 ms  lỗi=0  bị từ chối=0
+t=   20.1s giờ ảo  0.27h  tốc độ ≈       281 ev/s  p95=50.61 ms  lỗi=0  bị từ chối=0
+t=   30.1s giờ ảo   0.4h  tốc độ ≈       262 ev/s  p95=50.63 ms  lỗi=0  bị từ chối=0
+t=   40.1s giờ ảo  0.53h  tốc độ ≈       242 ev/s  p95=50.63 ms  lỗi=0  bị từ chối=0
+t=   50.1s giờ ảo  0.67h  tốc độ ≈       223 ev/s  p95=50.61 ms  lỗi=0  bị từ chối=0
+t=   60.1s giờ ảo   0.8h  tốc độ ≈       204 ev/s  p95=50.67 ms  lỗi=0  bị từ chối=0
+t=   70.1s giờ ảo  0.93h  tốc độ ≈       185 ev/s  p95=50.66 ms  lỗi=0  bị từ chối=0
+t=   80.1s giờ ảo  1.07h  tốc độ ≈       167 ev/s  p95=50.71 ms  lỗi=0  bị từ chối=0
+t=   90.1s giờ ảo   1.2h  tốc độ ≈       157 ev/s  p95=50.68 ms  lỗi=0  bị từ chối=0
+t=  100.1s giờ ảo  1.33h  tốc độ ≈       149 ev/s  p95=50.67 ms  lỗi=0  bị từ chối=0
+t=  110.1s giờ ảo  1.47h  tốc độ ≈       141 ev/s  p95=50.6 ms  lỗi=0  bị từ chối=0
+t=  120.1s giờ ảo   1.6h  tốc độ ≈       132 ev/s  p95=50.64 ms  lỗi=0  bị từ chối=0
+t=  130.1s giờ ảo  1.73h  tốc độ ≈       124 ev/s  p95=50.66 ms  lỗi=0  bị từ chối=0
+t=  140.1s giờ ảo  1.87h  tốc độ ≈       116 ev/s  p95=50.6 ms  lỗi=0  bị từ chối=0
+t=  150.1s giờ ảo   2.0h  tốc độ ≈       107 ev/s  p95=50.67 ms  lỗi=0  bị từ chối=0
+t=  160.1s giờ ảo  2.13h  tốc độ ≈       103 ev/s  p95=50.61 ms  lỗi=0  bị từ chối=0
+t=  170.1s giờ ảo  2.27h  tốc độ ≈       103 ev/s  p95=50.59 ms  lỗi=0  bị từ chối=0
+t=  180.1s giờ ảo   2.4h  tốc độ ≈       103 ev/s  p95=50.64 ms  lỗi=0  bị từ chối=0
+t=  190.1s giờ ảo  2.53h  tốc độ ≈       104 ev/s  p95=50.6 ms  lỗi=0  bị từ chối=0
+t=  200.1s giờ ảo  2.67h  tốc độ ≈       103 ev/s  p95=50.61 ms  lỗi=0  bị từ chối=0
+t=  210.1s giờ ảo   2.8h  tốc độ ≈       103 ev/s  p95=50.63 ms  lỗi=0  bị từ chối=0
+t=  220.1s giờ ảo  2.93h  tốc độ ≈       103 ev/s  p95=50.62 ms  lỗi=0  bị từ chối=0
+t=  230.1s giờ ảo  3.07h  tốc độ ≈       104 ev/s  p95=50.61 ms  lỗi=0  bị từ chối=0
+t=  240.1s giờ ảo   3.2h  tốc độ ≈       112 ev/s  p95=50.61 ms  lỗi=0  bị từ chối=0
+t=  250.1s giờ ảo  3.33h  tốc độ ≈       120 ev/s  p95=50.61 ms  lỗi=0  bị từ chối=0
+t=  260.1s giờ ảo  3.47h  tốc độ ≈       128 ev/s  p95=50.63 ms  lỗi=0  bị từ chối=0
+t=  270.1s giờ ảo   3.6h  tốc độ ≈       136 ev/s  p95=50.64 ms  lỗi=0  bị từ chối=0
+t=  280.1s giờ ảo  3.73h  tốc độ ≈       144 ev/s  p95=50.65 ms  lỗi=0  bị từ chối=0
+t=  290.1s giờ ảo  3.87h  tốc độ ≈       153 ev/s  p95=50.62 ms  lỗi=0  bị từ chối=0
+t=  300.1s giờ ảo   4.0h  tốc độ ≈       161 ev/s  p95=50.62 ms  lỗi=0  bị từ chối=0
+t=  310.1s giờ ảo  4.13h  tốc độ ≈       196 ev/s  p95=50.59 ms  lỗi=0  bị từ chối=0
+t=  320.1s giờ ảo  4.27h  tốc độ ≈       257 ev/s  p95=50.63 ms  lỗi=0  bị từ chối=0
+t=  330.1s giờ ảo   4.4h  tốc độ ≈       317 ev/s  p95=50.58 ms  lỗi=0  bị từ chối=0
+t=  340.1s giờ ảo  4.53h  tốc độ ≈       377 ev/s  p95=50.58 ms  lỗi=0  bị từ chối=0
+t=  350.1s giờ ảo  4.67h  tốc độ ≈       438 ev/s  p95=50.54 ms  lỗi=0  bị từ chối=0
+t=  360.1s giờ ảo   4.8h  tốc độ ≈       498 ev/s  p95=50.56 ms  lỗi=0  bị từ chối=0
+t=  370.1s giờ ảo  4.93h  tốc độ ≈       558 ev/s  p95=50.53 ms  lỗi=0  bị từ chối=0
+t=  380.1s giờ ảo  5.07h  tốc độ ≈       634 ev/s  p95=50.55 ms  lỗi=0  bị từ chối=0
+t=  390.1s giờ ảo   5.2h  tốc độ ≈       787 ev/s  p95=50.54 ms  lỗi=0  bị từ chối=0
+t=  400.1s giờ ảo  5.33h  tốc độ ≈       952 ev/s  p95=50.53 ms  lỗi=0  bị từ chối=0
+t=  410.1s giờ ảo  5.47h  tốc độ ≈     1,117 ev/s  p95=50.48 ms  lỗi=0  bị từ chối=0
+t=  420.1s giờ ảo   5.6h  tốc độ ≈     1,283 ev/s  p95=50.46 ms  lỗi=0  bị từ chối=0
+t=  430.1s giờ ảo  5.73h  tốc độ ≈     1,448 ev/s  p95=50.46 ms  lỗi=0  bị từ chối=0
+t=  440.1s giờ ảo  5.87h  tốc độ ≈     1,614 ev/s  p95=50.41 ms  lỗi=0  bị từ chối=0
+t=  450.1s giờ ảo   6.0h  tốc độ ≈     1,779 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t=  460.1s giờ ảo  6.13h  tốc độ ≈     1,958 ev/s  p95=50.42 ms  lỗi=0  bị từ chối=0
+t=  470.1s giờ ảo  6.27h  tốc độ ≈     2,152 ev/s  p95=50.4 ms  lỗi=0  bị từ chối=0
+t=  480.1s giờ ảo   6.4h  tốc độ ≈     2,344 ev/s  p95=50.4 ms  lỗi=0  bị từ chối=0
+t=  490.1s giờ ảo  6.53h  tốc độ ≈     2,537 ev/s  p95=50.37 ms  lỗi=0  bị từ chối=0
+t=  500.1s giờ ảo  6.67h  tốc độ ≈     2,731 ev/s  p95=50.34 ms  lỗi=0  bị từ chối=0
+t=  510.1s giờ ảo   6.8h  tốc độ ≈     2,916 ev/s  p95=50.38 ms  lỗi=0  bị từ chối=0
+t=  520.1s giờ ảo  6.93h  tốc độ ≈     3,108 ev/s  p95=50.33 ms  lỗi=0  bị từ chối=0
+t=  530.1s giờ ảo  7.07h  tốc độ ≈     3,288 ev/s  p95=50.34 ms  lỗi=0  bị từ chối=0
+t=  540.1s giờ ảo   7.2h  tốc độ ≈     3,328 ev/s  p95=50.31 ms  lỗi=0  bị từ chối=0
+t=  550.1s giờ ảo  7.33h  tốc độ ≈     3,356 ev/s  p95=50.31 ms  lỗi=0  bị từ chối=0
+t=  560.1s giờ ảo  7.47h  tốc độ ≈     3,392 ev/s  p95=50.29 ms  lỗi=0  bị từ chối=0
+t=  570.1s giờ ảo   7.6h  tốc độ ≈     3,419 ev/s  p95=50.32 ms  lỗi=0  bị từ chối=0
+t=  580.1s giờ ảo  7.73h  tốc độ ≈     3,438 ev/s  p95=50.33 ms  lỗi=0  bị từ chối=0
+t=  590.1s giờ ảo  7.87h  tốc độ ≈     3,466 ev/s  p95=50.3 ms  lỗi=0  bị từ chối=0
+t=  600.1s giờ ảo   8.0h  tốc độ ≈     3,502 ev/s  p95=50.28 ms  lỗi=0  bị từ chối=0
+t=  610.1s giờ ảo  8.13h  tốc độ ≈     3,432 ev/s  p95=50.3 ms  lỗi=0  bị từ chối=0
+t=  620.1s giờ ảo  8.27h  tốc độ ≈     3,259 ev/s  p95=50.3 ms  lỗi=0  bị từ chối=0
+t=  630.1s giờ ảo   8.4h  tốc độ ≈     3,094 ev/s  p95=50.33 ms  lỗi=0  bị từ chối=0
+t=  640.1s giờ ảo  8.53h  tốc độ ≈     2,935 ev/s  p95=50.33 ms  lỗi=0  bị từ chối=0
+t=  650.1s giờ ảo  8.67h  tốc độ ≈     2,770 ev/s  p95=50.33 ms  lỗi=0  bị từ chối=0
+t=  660.1s giờ ảo   8.8h  tốc độ ≈     2,605 ev/s  p95=50.38 ms  lỗi=0  bị từ chối=0
+t=  670.1s giờ ảo  8.93h  tốc độ ≈     2,440 ev/s  p95=50.36 ms  lỗi=0  bị từ chối=0
+t=  680.1s giờ ảo  9.07h  tốc độ ≈     2,288 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t=  690.1s giờ ảo   9.2h  tốc độ ≈     2,219 ev/s  p95=50.38 ms  lỗi=0  bị từ chối=0
+t=  700.1s giờ ảo  9.33h  tốc độ ≈     2,159 ev/s  p95=50.4 ms  lỗi=0  bị từ chối=0
+t=  710.1s giờ ảo  9.47h  tốc độ ≈     2,104 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t=  720.1s giờ ảo   9.6h  tốc độ ≈     2,054 ev/s  p95=50.41 ms  lỗi=0  bị từ chối=0
+t=  730.1s giờ ảo  9.73h  tốc độ ≈     1,999 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t=  740.1s giờ ảo  9.87h  tốc độ ≈     1,939 ev/s  p95=50.41 ms  lỗi=0  bị từ chối=0
+t=  750.1s giờ ảo  10.0h  tốc độ ≈     1,884 ev/s  p95=50.42 ms  lỗi=0  bị từ chối=0
+t=  760.1s giờ ảo 10.13h  tốc độ ≈     1,917 ev/s  p95=50.43 ms  lỗi=0  bị từ chối=0
+t=  770.1s giờ ảo 10.27h  tốc độ ≈     2,027 ev/s  p95=50.4 ms  lỗi=0  bị từ chối=0
+t=  780.1s giờ ảo  10.4h  tốc độ ≈     2,133 ev/s  p95=50.37 ms  lỗi=0  bị từ chối=0
+t=  790.1s giờ ảo 10.53h  tốc độ ≈     2,243 ev/s  p95=50.44 ms  lỗi=0  bị từ chối=0
+t=  800.1s giờ ảo 10.67h  tốc độ ≈     2,358 ev/s  p95=50.4 ms  lỗi=0  bị từ chối=0
+t=  810.1s giờ ảo  10.8h  tốc độ ≈     2,468 ev/s  p95=50.38 ms  lỗi=0  bị từ chối=0
+t=  820.1s giờ ảo 10.93h  tốc độ ≈     2,573 ev/s  p95=50.37 ms  lỗi=0  bị từ chối=0
+t=  830.1s giờ ảo 11.07h  tốc độ ≈     2,675 ev/s  p95=50.32 ms  lỗi=0  bị từ chối=0
+t=  840.1s giờ ảo  11.2h  tốc độ ≈     2,744 ev/s  p95=50.36 ms  lỗi=0  bị từ chối=0
+t=  850.1s giờ ảo 11.33h  tốc độ ≈     2,799 ev/s  p95=50.34 ms  lỗi=0  bị từ chối=0
+t=  860.1s giờ ảo 11.47h  tốc độ ≈     2,847 ev/s  p95=50.32 ms  lỗi=0  bị từ chối=0
+t=  870.1s giờ ảo  11.6h  tốc độ ≈     2,902 ev/s  p95=50.33 ms  lỗi=0  bị từ chối=0
+t=  880.1s giờ ảo 11.73h  tốc độ ≈     2,964 ev/s  p95=50.35 ms  lỗi=0  bị từ chối=0
+t=  890.1s giờ ảo 11.87h  tốc độ ≈     3,020 ev/s  p95=50.36 ms  lỗi=0  bị từ chối=0
+t=  900.1s giờ ảo  12.0h  tốc độ ≈     3,067 ev/s  p95=50.33 ms  lỗi=0  bị từ chối=0
+t=  910.1s giờ ảo 12.13h  tốc độ ≈     3,039 ev/s  p95=50.31 ms  lỗi=0  bị từ chối=0
+t=  920.1s giờ ảo 12.27h  tốc độ ≈     2,936 ev/s  p95=50.35 ms  lỗi=0  bị từ chối=0
+t=  930.1s giờ ảo  12.4h  tốc độ ≈     2,825 ev/s  p95=50.35 ms  lỗi=0  bị từ chối=0
+t=  940.1s giờ ảo 12.53h  tốc độ ≈     2,708 ev/s  p95=50.36 ms  lỗi=0  bị từ chối=0
+t=  950.1s giờ ảo 12.67h  tốc độ ≈     2,599 ev/s  p95=50.35 ms  lỗi=0  bị từ chối=0
+t=  960.1s giờ ảo  12.8h  tốc độ ≈     2,495 ev/s  p95=50.38 ms  lỗi=0  bị từ chối=0
+t=  970.1s giờ ảo 12.93h  tốc độ ≈     2,384 ev/s  p95=50.37 ms  lỗi=0  bị từ chối=0
+t=  980.1s giờ ảo 13.07h  tốc độ ≈     2,272 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t=  990.1s giờ ảo  13.2h  tốc độ ≈     2,187 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t= 1000.1s giờ ảo 13.33h  tốc độ ≈     2,109 ev/s  p95=50.38 ms  lỗi=0  bị từ chối=0
+t= 1010.1s giờ ảo 13.47h  tốc độ ≈     2,026 ev/s  p95=50.42 ms  lỗi=0  bị từ chối=0
+t= 1020.1s giờ ảo  13.6h  tốc độ ≈     1,943 ev/s  p95=50.41 ms  lỗi=0  bị từ chối=0
+t= 1030.1s giờ ảo 13.73h  tốc độ ≈     1,861 ev/s  p95=50.41 ms  lỗi=0  bị từ chối=0
+t= 1040.1s giờ ảo 13.87h  tốc độ ≈     1,778 ev/s  p95=50.42 ms  lỗi=0  bị từ chối=0
+t= 1050.1s giờ ảo  14.0h  tốc độ ≈     1,695 ev/s  p95=50.43 ms  lỗi=0  bị từ chối=0
+t= 1060.1s giờ ảo 14.13h  tốc độ ≈     1,650 ev/s  p95=50.44 ms  lỗi=0  bị từ chối=0
+t= 1070.1s giờ ảo 14.27h  tốc độ ≈     1,650 ev/s  p95=50.47 ms  lỗi=0  bị từ chối=0
+t= 1080.1s giờ ảo  14.4h  tốc độ ≈     1,654 ev/s  p95=50.47 ms  lỗi=0  bị từ chối=0
+t= 1090.1s giờ ảo 14.53h  tốc độ ≈     1,650 ev/s  p95=50.45 ms  lỗi=0  bị từ chối=0
+t= 1100.1s giờ ảo 14.67h  tốc độ ≈     1,650 ev/s  p95=50.47 ms  lỗi=0  bị từ chối=0
+t= 1110.1s giờ ảo  14.8h  tốc độ ≈     1,654 ev/s  p95=50.43 ms  lỗi=0  bị từ chối=0
+t= 1120.1s giờ ảo 14.93h  tốc độ ≈     1,654 ev/s  p95=50.45 ms  lỗi=0  bị từ chối=0
+t= 1130.1s giờ ảo 15.07h  tốc độ ≈     1,661 ev/s  p95=50.43 ms  lỗi=0  bị từ chối=0
+t= 1140.1s giờ ảo  15.2h  tốc độ ≈     1,710 ev/s  p95=50.46 ms  lỗi=0  bị từ chối=0
+t= 1150.1s giờ ảo 15.33h  tốc độ ≈     1,765 ev/s  p95=50.43 ms  lỗi=0  bị từ chối=0
+t= 1160.1s giờ ảo 15.47h  tốc độ ≈     1,820 ev/s  p95=50.42 ms  lỗi=0  bị từ chối=0
+t= 1170.1s giờ ảo  15.6h  tốc độ ≈     1,875 ev/s  p95=50.41 ms  lỗi=0  bị từ chối=0
+t= 1180.1s giờ ảo 15.73h  tốc độ ≈     1,930 ev/s  p95=50.43 ms  lỗi=0  bị từ chối=0
+t= 1190.1s giờ ảo 15.87h  tốc độ ≈     1,986 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t= 1200.1s giờ ảo  16.0h  tốc độ ≈     2,040 ev/s  p95=50.41 ms  lỗi=0  bị từ chối=0
+t= 1210.1s giờ ảo 16.13h  tốc độ ≈     2,132 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t= 1220.1s giờ ảo 16.27h  tốc độ ≈     2,270 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t= 1230.1s giờ ảo  16.4h  tốc độ ≈     2,413 ev/s  p95=50.37 ms  lỗi=0  bị từ chối=0
+t= 1240.1s giờ ảo 16.53h  tốc độ ≈     2,551 ev/s  p95=50.37 ms  lỗi=0  bị từ chối=0
+t= 1250.1s giờ ảo 16.67h  tốc độ ≈     2,689 ev/s  p95=50.34 ms  lỗi=0  bị từ chối=0
+t= 1260.1s giờ ảo  16.8h  tốc độ ≈     2,826 ev/s  p95=50.35 ms  lỗi=0  bị từ chối=0
+t= 1270.1s giờ ảo 16.93h  tốc độ ≈     2,964 ev/s  p95=50.41 ms  lỗi=0  bị từ chối=0
+t= 1280.1s giờ ảo 17.07h  tốc độ ≈     3,099 ev/s  p95=50.33 ms  lỗi=0  bị từ chối=0
+t= 1290.1s giờ ảo  17.2h  tốc độ ≈     3,205 ev/s  p95=50.32 ms  lỗi=0  bị từ chối=0
+t= 1300.1s giờ ảo 17.33h  tốc độ ≈     3,315 ev/s  p95=50.31 ms  lỗi=0  bị từ chối=0
+t= 1310.1s giờ ảo 17.47h  tốc độ ≈     3,433 ev/s  p95=50.29 ms  lỗi=0  bị từ chối=0
+t= 1320.1s giờ ảo  17.6h  tốc độ ≈     3,544 ev/s  p95=50.32 ms  lỗi=0  bị từ chối=0
+t= 1330.1s giờ ảo 17.73h  tốc độ ≈     3,645 ev/s  p95=50.29 ms  lỗi=0  bị từ chối=0
+t= 1340.1s giờ ảo 17.87h  tốc độ ≈     3,756 ev/s  p95=50.3 ms  lỗi=0  bị từ chối=0
+t= 1350.1s giờ ảo  18.0h  tốc độ ≈     3,874 ev/s  p95=50.24 ms  lỗi=0  bị từ chối=0
+t= 1360.1s giờ ảo 18.13h  tốc độ ≈     3,957 ev/s  p95=50.3 ms  lỗi=0  bị từ chối=0
+t= 1370.1s giờ ảo 18.27h  tốc độ ≈     4,002 ev/s  p95=50.29 ms  lỗi=0  bị từ chối=0
+t= 1380.1s giờ ảo  18.4h  tốc độ ≈     4,057 ev/s  p95=50.28 ms  lỗi=0  bị từ chối=0
+t= 1390.1s giờ ảo 18.53h  tốc độ ≈     4,122 ev/s  p95=50.25 ms  lỗi=0  bị từ chối=0
+t= 1400.1s giờ ảo 18.67h  tốc độ ≈     4,178 ev/s  p95=50.26 ms  lỗi=0  bị từ chối=0
+t= 1410.1s giờ ảo  18.8h  tốc độ ≈     4,222 ev/s  p95=50.27 ms  lỗi=0  bị từ chối=0
+t= 1420.1s giờ ảo 18.93h  tốc độ ≈     4,277 ev/s  p95=50.27 ms  lỗi=0  bị từ chối=0
+t= 1430.1s giờ ảo 19.07h  tốc độ ≈     4,325 ev/s  p95=50.25 ms  lỗi=0  bị từ chối=0
+t= 1440.1s giờ ảo  19.2h  tốc độ ≈     4,259 ev/s  p95=50.27 ms  lỗi=0  bị từ chối=0
+t= 1450.1s giờ ảo 19.33h  tốc độ ≈     4,166 ev/s  p95=50.24 ms  lỗi=0  bị từ chối=0
+t= 1460.1s giờ ảo 19.47h  tốc độ ≈     4,084 ev/s  p95=50.27 ms  lỗi=0  bị từ chối=0
+t= 1470.1s giờ ảo  19.6h  tốc độ ≈     4,011 ev/s  p95=50.29 ms  lỗi=0  bị từ chối=0
+t= 1480.1s giờ ảo 19.73h  tốc độ ≈     3,919 ev/s  p95=50.27 ms  lỗi=0  bị từ chối=0
+t= 1490.1s giờ ảo 19.87h  tốc độ ≈     3,837 ev/s  p95=50.31 ms  lỗi=0  bị từ chối=0
+t= 1500.1s giờ ảo  20.0h  tốc độ ≈     3,763 ev/s  p95=50.3 ms  lỗi=0  bị từ chối=0
+t= 1510.1s giờ ảo 20.13h  tốc độ ≈     3,653 ev/s  p95=50.31 ms  lỗi=0  bị từ chối=0
+t= 1520.1s giờ ảo 20.27h  tốc độ ≈     3,506 ev/s  p95=50.32 ms  lỗi=0  bị từ chối=0
+t= 1530.1s giờ ảo  20.4h  tốc độ ≈     3,368 ev/s  p95=50.34 ms  lỗi=0  bị từ chối=0
+t= 1540.1s giờ ảo 20.53h  tốc độ ≈     3,239 ev/s  p95=50.31 ms  lỗi=0  bị từ chối=0
+t= 1550.1s giờ ảo 20.67h  tốc độ ≈     3,093 ev/s  p95=50.35 ms  lỗi=0  bị từ chối=0
+t= 1560.1s giờ ảo  20.8h  tốc độ ≈     2,956 ev/s  p95=50.34 ms  lỗi=0  bị từ chối=0
+t= 1570.1s giờ ảo 20.93h  tốc độ ≈     2,826 ev/s  p95=50.35 ms  lỗi=0  bị từ chối=0
+t= 1580.1s giờ ảo 21.07h  tốc độ ≈     2,688 ev/s  p95=50.37 ms  lỗi=0  bị từ chối=0
+t= 1590.1s giờ ảo  21.2h  tốc độ ≈     2,544 ev/s  p95=50.38 ms  lỗi=0  bị từ chối=0
+t= 1600.1s giờ ảo 21.33h  tốc độ ≈     2,406 ev/s  p95=50.4 ms  lỗi=0  bị từ chối=0
+t= 1610.1s giờ ảo 21.47h  tốc độ ≈     2,274 ev/s  p95=50.39 ms  lỗi=0  bị từ chối=0
+t= 1620.1s giờ ảo  21.6h  tốc độ ≈     2,136 ev/s  p95=50.45 ms  lỗi=0  bị từ chối=0
+t= 1630.1s giờ ảo 21.73h  tốc độ ≈     1,994 ev/s  p95=50.42 ms  lỗi=0  bị từ chối=0
+t= 1640.1s giờ ảo 21.87h  tốc độ ≈     1,856 ev/s  p95=50.42 ms  lỗi=0  bị từ chối=0
+t= 1650.1s giờ ảo  22.0h  tốc độ ≈     1,722 ev/s  p95=50.44 ms  lỗi=0  bị từ chối=0
+t= 1660.1s giờ ảo 22.13h  tốc độ ≈     1,599 ev/s  p95=50.43 ms  lỗi=0  bị từ chối=0
+t= 1670.1s giờ ảo 22.27h  tốc độ ≈     1,485 ev/s  p95=50.46 ms  lỗi=0  bị từ chối=0
+t= 1680.1s giờ ảo  22.4h  tốc độ ≈     1,375 ev/s  p95=50.48 ms  lỗi=0  bị từ chối=0
+t= 1690.1s giờ ảo 22.53h  tốc độ ≈     1,268 ev/s  p95=50.45 ms  lỗi=0  bị từ chối=0
+t= 1700.1s giờ ảo 22.67h  tốc độ ≈     1,157 ev/s  p95=50.43 ms  lỗi=0  bị từ chối=0
+t= 1710.1s giờ ảo  22.8h  tốc độ ≈     1,044 ev/s  p95=50.47 ms  lỗi=0  bị từ chối=0
+t= 1720.1s giờ ảo 22.93h  tốc độ ≈       934 ev/s  p95=50.5 ms  lỗi=0  bị từ chối=0
+t= 1730.1s giờ ảo 23.07h  tốc độ ≈       832 ev/s  p95=50.5 ms  lỗi=0  bị từ chối=0
+t= 1740.1s giờ ảo  23.2h  tốc độ ≈       758 ev/s  p95=50.48 ms  lỗi=0  bị từ chối=0
+t= 1750.1s giờ ảo 23.33h  tốc độ ≈       687 ev/s  p95=50.51 ms  lỗi=0  bị từ chối=0
+t= 1760.1s giờ ảo 23.47h  tốc độ ≈       619 ev/s  p95=50.51 ms  lỗi=0  bị từ chối=0
+t= 1770.1s giờ ảo  23.6h  tốc độ ≈       551 ev/s  p95=50.53 ms  lỗi=0  bị từ chối=0
+t= 1780.1s giờ ảo 23.73h  tốc độ ≈       482 ev/s  p95=50.54 ms  lỗi=0  bị từ chối=0
+t= 1790.1s giờ ảo 23.87h  tốc độ ≈       412 ev/s  p95=50.59 ms  lỗi=0  bị từ chối=0
+t= 1800.0s giờ ảo  24.0h  tốc độ ≈       344 ev/s  p95=50.59 ms  lỗi=0  bị từ chối=0
+{
+  "tag": "tv4-soak30m",
+  "mode": "kafka",
+  "started_at": "2026-11-04T20:43:16",
+  "sent_total": 3599990,
+  "duration_sec": 1800.01,
+  "throughput_eps": 2000.0,
+  "stopped_early": false,
+  "send_errors": 0,
+  "rejected_by_collector": 0,
+  "dirty_injected": 17918,
+  "dirty_by_kind": {
+    "duplicate": 17918
+  },
+  "late_sessions": 0,
+  "by_event_type": {
+    "page_view": 907860,
+    "product_view": 1525369,
+    "add_to_cart": 434117,
+    "search": 457229,
+    "checkout_start": 109176,
+    "order_placed": 76446,
+    "payment": 78828,
+    "remove_from_cart": 10965
+  },
+  "ack_latency_ms": {
+    "what": "Kafka broker ack",
+    "p50": 49.73,
+    "p95": 50.38,
+    "p99": 50.7
+  },
+  "stats_csv": "D:\\DATA\\Code\\BigData_BakeryStore\\results\\sim_kafka_tv4-soak30m_1793799796.csv"
+}
+Đã lưu kết quả: D:\DATA\Code\BigData_BakeryStore\results\sim_kafka_tv4-soak30m_1793799796.json

@@ -1,81 +1,80 @@
-# Hướng dẫn Phân hệ Đo lường & Benchmark – Thành viên 4 (Phong)
+# Benchmark – Đo lường & thí nghiệm hiệu năng (TV4)
 
-Thư mục này chứa toàn bộ mã nguồn kiểm chứng, đo lường và thực nghiệm hiệu năng cho hệ thống Thu nhận Dữ liệu Tiệm Bánh (**Bakery Store Streaming Pipeline**).
+Bộ công cụ đo throughput, độ trễ, consumer lag và **đếm chính xác bản ghi mất / trùng** trên cụm Kafka KRaft
+3 broker thật của TV1. Kết quả nằm ở [`results/tv4/`](../results/tv4/) (bảng số:
+[`summary_tables.md`](../results/tv4/summary_tables.md)), báo cáo phần TV4 ở [`docs/TV4.docx`](../docs/TV4.docx).
 
----
+> Không có chế độ "giả lập số liệu". Nếu không kết nối được Kafka, script dừng và báo lỗi.
 
-## 1. Danh mục các file trong `benchmark/`
+## Các file
 
-| Tên file | Chức năng chính |
+| File | Vai trò |
 |---|---|
-| **`run_benchmarks.py`** | **Script tự động hóa:** Chạy trọn gói 6 kịch bản benchmark quy chuẩn, tự động xuất log, CSV, JSON, vẽ biểu đồ so sánh và tạo báo cáo cho TV5. |
-| **`verify_consumer.py`** | **Consumer kiểm chứng:** Đọc message từ Kafka, đo Throughput thời gian thực (EPS), End-to-End Latency ($p_{50}, p_{95}, p_{99}$), Consumer Lag, đếm bản ghi trùng lặp và phân tích DLQ. |
-| **`load_generator.py`** | **Bộ phát tải (Load Generator):** Sinh event đơn hàng/clickstream tiệm bánh và đẩy thẳng vào Kafka với các bộ cấu hình tham số tùy chỉnh (`acks`, `batch_size`, `linger_ms`, `compression`). |
-| **`plot_results.py`** | **Công cụ trực quan hóa:** Vẽ đồ thị chuỗi thời gian 3 tầng (Throughput, $p_{95}$ Latency, Lag) và biểu đồ cột kép so sánh đối chiếu giữa các thí nghiệm. |
-| **`catalog.json`** | Danh mục sản phẩm, cửa hàng và phương thức thanh toán của tiệm bánh dùng để sinh dữ liệu. |
-| **`requirements.txt`** | Danh mục thư viện Python phụ thuộc (`confluent-kafka`, `matplotlib`). |
+| `run_benchmarks.py` | Điều phối ma trận thí nghiệm E1–E8 và thí nghiệm chịu lỗi E9: reset topic, chạy consumer kiểm chứng song song với N producer, ghi JSON/CSV thô |
+| `load_generator.py` | Producer đa tiến trình (confluent-kafka). Gửi event tiệm bánh dựng sẵn, key = `user_id`, gắn header `tv4 = (run_id, worker, seq)` |
+| `bench_consumer.py` | Consumer kiểm chứng: gán partition tại offset đầu lần chạy, đo e2e latency / lag mỗi giây, đếm mất / trùng theo header hoặc `event_id` |
+| `soak_test.py` | Chạy liên tục 30–60 phút: simulator của TV3 → 3 topic nghiệp vụ → consumer kiểm chứng (có chèn trùng có chủ đích để kiểm tra consumer) |
+| `summarize.py` | Gộp các lần lặp → `summary_*.csv`, `summary.json`, `summary_tables.md` |
+| `plot_results.py` | Vẽ biểu đồ → `results/tv4/figures/*.png` |
+| `verify_consumer.py` | Consumer đọc topic nghiệp vụ và in log (`--show N` in chi tiết N bản ghi), đếm trùng, DLQ |
+| `bench_utils.py` | Lấy mẫu reservoir, phân vị, định dạng header |
+| `docker-compose.ramdisk.yml` | Override đặt log của broker lên RAM, chỉ dùng cho E1–E8 (xem mục "Vì sao dùng RAM") |
+| `catalog.json` | Sản phẩm, cửa hàng, phương thức thanh toán để sinh event |
 
----
+## Định nghĩa số đo
 
-## 2. Hướng dẫn Khởi chạy & Vận hành
+| Số đo | Cách tính |
+|---|---|
+| Throughput producer | số bản ghi broker **đã xác nhận** ÷ thời gian từ lúc bắt đầu tới khi `flush()` xong |
+| Throughput consumer | số bản ghi consumer nhận ÷ thời gian từ bản ghi đầu tới bản ghi cuối |
+| Độ trễ ack | `produce()` → broker xác nhận (`msg.latency()` của librdkafka) |
+| Độ trễ end-to-end (e2e) | thời điểm consumer nhận − `CreateTime` producer gán lúc `produce()`; cùng 1 máy nên cùng đồng hồ. Bỏ 3 giây khởi động |
+| Consumer lag | Σ(high watermark − vị trí đã đọc) trên mọi partition, hỏi broker mỗi giây ở luồng riêng |
+| Mất sau ack | đã gửi − nhận được (duy nhất) − bị producer báo lỗi − chưa flush |
+| Trùng | số `(worker, seq)` (hoặc `event_id`) xuất hiện quá 1 lần |
+| Byte trên mạng / bản ghi | `tx_bytes` (thống kê librdkafka) ÷ số bản ghi; tỉ lệ nén = byte JSON gốc ÷ `tx_bytes` |
 
-### Bước 1: Cài đặt thư viện phụ thuộc
-Đảm bảo đã kích hoạt môi trường Python và cài đặt:
+Phân vị lấy trên mẫu reservoir (tối đa 100.000 giá trị mỗi tiến trình, ngẫu nhiên đều). Mỗi cấu hình chạy 3 lần,
+xen kẽ giữa các cấu hình để giảm sai lệch theo thời gian. Kết quả là trung bình ± độ lệch chuẩn.
+
+## Cách chạy lại
+
 ```powershell
-pip install -r benchmark/requirements.txt
+# 0. Môi trường (Python 3.12)
+python -m venv .venv; .\.venv\Scripts\pip install -r benchmark\requirements.txt -r simulator\requirements.txt
+
+# 1. Ma trận tốc độ tối đa E1–E8: broker ghi log lên RAM
+docker compose -f scripts/docker-compose.yml -f benchmark/docker-compose.ramdisk.yml up -d --force-recreate --renew-anon-volumes kafka-1 kafka-2 kafka-3
+#    file của topic đã xoá được dọn sau 1s thay vì 60s (cấu hình động, chỉ trên cụm RAM) để tmpfs 2 GB không bị đầy
+docker exec kafka-1 /opt/kafka/bin/kafka-configs.sh --bootstrap-server localhost:9092 --entity-type brokers --entity-default --alter --add-config log.segment.delete.delay.ms=1000
+.\.venv\Scripts\python benchmark\run_benchmarks.py --list                       # xem danh sách cấu hình
+.\.venv\Scripts\python benchmark\run_benchmarks.py --experiments all --reps 3 --duration 15
+
+# 2. Trả lại cấu hình đĩa thật của TV1 cho thí nghiệm chịu lỗi và chạy dài
+docker compose -f scripts/docker-compose.yml up -d --force-recreate kafka-1 kafka-2 kafka-3
+cd scripts; .\create_topics.ps1; cd ..
+.\.venv\Scripts\python benchmark\run_benchmarks.py --experiments fault --reps 2 --min-free-gb 5
+.\.venv\Scripts\python benchmark\soak_test.py --duration 1800 --rate 2000
+
+# 3. Đo bổ sung E8 ở tải cao (trên cụm RAM như bước 1)
+.\.venv\Scripts\python benchmark\run_benchmarks.py --experiments E8_load_curve --load-rates 250000,300000,350000,400000,0 --reps 3 --duration 15
+
+# 4. Tổng hợp + biểu đồ
+.\.venv\Scripts\python benchmark\summarize.py
+.\.venv\Scripts\python benchmark\plot_results.py
+
+# Consumer đọc topic nghiệp vụ và in log
+.\.venv\Scripts\python benchmark\verify_consumer.py --from-beginning --idle-timeout 10 --show 20 --tag business
 ```
 
-### Bước 2: Khởi động cụm Kafka (Nếu chưa bật)
-Mở Docker Desktop, sau đó mở terminal tại thư mục gốc dự án:
-```powershell
-cd scripts
-docker compose up -d
-.\create_topics.ps1
-cd ..
-```
-*(Kiểm tra Kafka UI tại [http://localhost:8080](http://localhost:8080) trạng thái `3 Online / 0 Offline`)*
+## Vì sao ma trận E1–E8 dùng RAM
 
----
+Docker Desktop lưu dữ liệu trong một đĩa ảo (`docker_data.vhdx`, trên máy này nằm ở ổ D). File này **không sparse**:
+nó phình theo tổng lượng đã ghi chứ không theo dung lượng Kafka đang giữ. Ba lần chạy đầu trên đĩa làm file
+tăng từ 4,1 lên 15,7 GB dù Kafka đã xoá hết dữ liệu. Ma trận 90 lần chạy ở 300–500k event/s ghi hàng trăm GB,
+nên log của broker được đặt lên tmpfs bằng file override (không sửa file của TV1). Mọi cấu hình Kafka khác giữ
+nguyên. Kafka mặc định không `fsync` mà ghi vào page cache, nên ảnh hưởng của việc này tới thông lượng là nhỏ.
+Báo cáo có so sánh với 3 lần đo trên đĩa thật ([`results/tv4/raw_disk/`](../results/tv4/raw_disk/)).
 
-### Bước 3: Chạy Tự động Toàn bộ 6 Kịch bản Benchmark
-Chỉ cần chạy 1 lệnh duy nhất:
-```powershell
-python benchmark/run_benchmarks.py --duration 20
-```
-> *Mỗi kịch bản sẽ chạy trong 20 giây. Toàn bộ quá trình diễn ra khoảng 2-3 phút.*
-
-#### Kết quả tự động sinh ra trong thư mục `results/`:
-1. **`results/benchmark_partition_scaling.png`**: Biểu đồ so sánh hiệu năng theo số lượng phân vùng (1 vs 3 vs 6 partitions).
-2. **`results/benchmark_producer_tuning.png`**: Biểu đồ đánh giá tinh chỉnh tham số Producer (Unbatched vs Critical vs High Throughput).
-3. **`results/tv4_benchmark_report.md`**: Báo cáo tổng kết đầy đủ bảng số liệu và phân tích chuyên sâu gửi cho **TV5** đưa vào Chương 6 & 7 của Báo cáo.
-4. Các file đồ thị chuỗi thời gian `.png`, file dữ liệu thô `.csv` từng giây, và file `.json` cấu hình.
-
----
-
-## 3. Chạy từng công cụ độc lập (Nâng cao)
-
-### A. Chạy Consumer kiểm chứng độc lập
-Để theo dõi và đo lường liên tục luồng dữ liệu nghiệp vụ:
-```powershell
-# Đọc toàn bộ các topic nghiệp vụ tiệm bánh:
-python benchmark/verify_consumer.py --topics bakery.user-events,bakery.orders,bakery.payments,bakery.dlq --idle-timeout 10
-
-# Đọc topic benchmark riêng lẻ từ đầu:
-python benchmark/verify_consumer.py --topics bakery.bench.p3 --from-beginning --tag test_p3
-```
-
-### B. Chạy Bộ phát tải độc lập
-```powershell
-# Phát tải tối đa vào topic 3 partition trong 30 giây:
-python benchmark/load_generator.py --topic bakery.bench.p3 --workers 4 --duration 30 --tag manual_test
-```
-
-### C. Vẽ lại biểu đồ từ file CSV hoặc JSON
-```powershell
-# Vẽ đồ thị chuỗi thời gian từ file CSV:
-python benchmark/plot_results.py results/consumer_run_123456789.csv
-
-# So sánh các file kết quả JSON:
-python benchmark/plot_results.py --compare results/sim_kafka_*.json --out results/my_compare.png
-```
-
+Mỗi lần chạy, harness xoá và tạo lại topic benchmark (giữ RF=3, `min.insync.replicas=2`; thêm
+`file.delete.delay.ms=1000` để giải phóng bộ nhớ ngay), và dừng hẳn nếu ổ đĩa còn dưới `--min-free-gb`.

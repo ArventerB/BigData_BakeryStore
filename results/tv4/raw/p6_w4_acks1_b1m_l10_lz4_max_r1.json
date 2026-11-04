@@ -1,0 +1,69 @@
+{
+  "config_id": "p6_w4_acks1_b1m_l10_lz4_max",
+  "rep": 1,
+  "experiments": [
+    "E3_batch:1MB"
+  ],
+  "run_id": 2795721180,
+  "started_at": "2026-11-04T12:58:06.489796+00:00",
+  "config": {
+    "topic": "bakery.bench.p6",
+    "workers": 4,
+    "acks": "1",
+    "batch_size": 1000000,
+    "linger_ms": 10,
+    "compression": "lz4",
+    "rate": 0,
+    "partitions": 6,
+    "duration": 15.0
+  },
+  "producer": {
+    "sent": 5334000,
+    "acked": 5334000,
+    "failed": 0,
+    "not_flushed": 0,
+    "errors_by_kind": {},
+    "produce_sec": 15.026,
+    "total_sec": 15.951,
+    "throughput_eps": 334402.7,
+    "offered_eps": 354980.0,
+    "raw_mb_per_sec": 102.43,
+    "raw_bytes_per_msg": 306.3,
+    "wire_bytes_per_msg": 87.7,
+    "compression_ratio": 3.49,
+    "ack_latency_ms": {
+      "p50": 1040.36,
+      "p95": 1847.83,
+      "p99": 2248.2,
+      "max": 2563.38,
+      "samples": 120000
+    }
+  },
+  "host_cpu_pct": {
+    "avg_while_producing": 99.8,
+    "max": 100.0,
+    "logical_cpus": 16
+  },
+  "consumer": {
+    "processes": 3,
+    "received": 5334000,
+    "unique": 5334000,
+    "duplicates": 0,
+    "foreign": 0,
+    "lost_after_ack": 0,
+    "consume_eps": 314304.4,
+    "drain_after_producer_sec": 1.05,
+    "max_lag": 317556,
+    "timed_out": false,
+    "e2e_latency_ms": {
+      "p50": 1704.94,
+      "p95": 2568.17,
+      "p99": 2868.81,
+      "max": 3229.63,
+      "samples": 300000
+    },
+    "verified": true
+  },
+  "fault": null,
+  "per_second_csv": "results\\tv4\\raw\\p6_w4_acks1_b1m_l10_lz4_max_r1.csv"
+}

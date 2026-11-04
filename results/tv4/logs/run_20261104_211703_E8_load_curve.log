@@ -1,0 +1,51 @@
+[21:17:03] Cụm Kafka: broker [1, 2, 3] | bootstrap localhost:9092,localhost:9094,localhost:9096
+[21:17:03] Lặp 3 lần | 15.0s mỗi lần | log: results\tv4\logs\run_20261104_211703_E8_load_curve.log
+[21:17:03] 5 cấu hình khác nhau × 3 lần = 15 lần chạy
+[21:17:03] ▶ warmup_p6_w4_acks1_b64k_l10_lz4_max | lần 0 | warmup | đĩa trống 11.2 GB
+[21:17:28]   ✓    236,740 eps | ack p95 2216.83 ms | e2e p95 7212.46 ms | gửi 3,916,000 nhận 3,916,000 mất 0 trùng 0 lỗi 0 | nén 3.48x | CPU 100.0%
+[21:17:28] [1/3] [1/5]
+[21:17:28] ▶ p3_w4_acksall_b64k_l10_lz4_250k | lần 1 | E8_load_curve:250k eps | đĩa trống 11.2 GB
+[21:17:52]   ✓    111,277 eps | ack p95 4720.65 ms | e2e p95 4529.06 ms | gửi 1,946,437 nhận 1,946,437 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 99.9%
+[21:17:52] [1/3] [2/5]
+[21:17:52] ▶ p3_w4_acksall_b64k_l10_lz4_300k | lần 1 | E8_load_curve:300k eps | đĩa trống 11.2 GB
+[21:18:16]   ✓    143,901 eps | ack p95 3207.88 ms | e2e p95 3252.62 ms | gửi 2,478,044 nhận 2,478,044 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 99.9%
+[21:18:16] [1/3] [3/5]
+[21:18:16] ▶ p3_w4_acksall_b64k_l10_lz4_350k | lần 1 | E8_load_curve:350k eps | đĩa trống 11.2 GB
+[21:18:40]   ✓    145,464 eps | ack p95 3269.87 ms | e2e p95 3330.64 ms | gửi 2,618,701 nhận 2,618,701 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 99.9%
+[21:18:40] [1/3] [4/5]
+[21:18:40] ▶ p3_w4_acksall_b64k_l10_lz4_400k | lần 1 | E8_load_curve:400k eps | đĩa trống 11.2 GB
+[21:19:05]   ✓    165,560 eps | ack p95 2790.05 ms | e2e p95 2845.07 ms | gửi 2,872,213 nhận 2,872,213 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 99.9%
+[21:19:05] [1/3] [5/5]
+[21:19:05] ▶ p3_w4_acksall_b64k_l10_lz4_max | lần 1 | E8_load_curve:tối đa | đĩa trống 11.2 GB
+[21:19:29]   ✓    161,131 eps | ack p95 3060.44 ms | e2e p95 3142.32 ms | gửi 2,763,000 nhận 2,763,000 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 100.0%
+[21:19:29] [2/3] [1/5]
+[21:19:29] ▶ p3_w4_acksall_b64k_l10_lz4_250k | lần 2 | E8_load_curve:250k eps | đĩa trống 11.2 GB
+[21:19:53]   ✓    160,668 eps | ack p95 2850.48 ms | e2e p95 2909.42 ms | gửi 2,787,381 nhận 2,787,381 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 97.9%
+[21:19:53] [2/3] [2/5]
+[21:19:53] ▶ p3_w4_acksall_b64k_l10_lz4_300k | lần 2 | E8_load_curve:300k eps | đĩa trống 11.2 GB
+[21:20:17]   ✓    165,418 eps | ack p95 3105.93 ms | e2e p95 3162.87 ms | gửi 2,848,045 nhận 2,848,045 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 99.4%
+[21:20:17] [2/3] [3/5]
+[21:20:17] ▶ p3_w4_acksall_b64k_l10_lz4_350k | lần 2 | E8_load_curve:350k eps | đĩa trống 11.2 GB
+[21:20:42]   ✓    163,405 eps | ack p95 3140.78 ms | e2e p95 3205.44 ms | gửi 2,849,772 nhận 2,849,772 mất 0 trùng 0 lỗi 0 | nén 3.5x | CPU 99.9%
+[21:20:42] [2/3] [4/5]
+[21:20:42] ▶ p3_w4_acksall_b64k_l10_lz4_400k | lần 2 | E8_load_curve:400k eps | đĩa trống 11.2 GB
+[21:21:06]   ✓    162,299 eps | ack p95 2990.3 ms | e2e p95 3189.0 ms | gửi 2,804,001 nhận 2,804,001 mất 0 trùng 0 lỗi 0 | nén 3.5x | CPU 99.9%
+[21:21:06] [2/3] [5/5]
+[21:21:06] ▶ p3_w4_acksall_b64k_l10_lz4_max | lần 2 | E8_load_curve:tối đa | đĩa trống 11.2 GB
+[21:21:29]   ✓    163,708 eps | ack p95 2985.37 ms | e2e p95 3060.31 ms | gửi 2,806,500 nhận 2,806,500 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 100.0%
+[21:21:29] [3/3] [1/5]
+[21:21:29] ▶ p3_w4_acksall_b64k_l10_lz4_250k | lần 3 | E8_load_curve:250k eps | đĩa trống 11.2 GB
+[21:21:53]   ✓    219,326 eps | ack p95 1845.47 ms | e2e p95 1945.17 ms | gửi 3,749,853 nhận 3,749,853 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 79.1%
+[21:21:53] [3/3] [2/5]
+[21:21:53] ▶ p3_w4_acksall_b64k_l10_lz4_300k | lần 3 | E8_load_curve:300k eps | đĩa trống 11.2 GB
+[21:22:17]   ✓    159,265 eps | ack p95 3086.78 ms | e2e p95 3139.33 ms | gửi 2,757,647 nhận 2,757,647 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 99.8%
+[21:22:17] [3/3] [3/5]
+[21:22:17] ▶ p3_w4_acksall_b64k_l10_lz4_350k | lần 3 | E8_load_curve:350k eps | đĩa trống 11.2 GB
+[21:22:41]   ✓    161,611 eps | ack p95 3347.88 ms | e2e p95 3435.1 ms | gửi 2,774,939 nhận 2,774,939 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 99.9%
+[21:22:41] [3/3] [4/5]
+[21:22:41] ▶ p3_w4_acksall_b64k_l10_lz4_400k | lần 3 | E8_load_curve:400k eps | đĩa trống 11.2 GB
+[21:23:06]   ✓    162,369 eps | ack p95 3206.37 ms | e2e p95 3272.26 ms | gửi 2,809,442 nhận 2,809,442 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 99.9%
+[21:23:06] [3/3] [5/5]
+[21:23:06] ▶ p3_w4_acksall_b64k_l10_lz4_max | lần 3 | E8_load_curve:tối đa | đĩa trống 11.2 GB
+[21:23:30]   ✓    159,976 eps | ack p95 3289.62 ms | e2e p95 3393.23 ms | gửi 2,753,000 nhận 2,753,000 mất 0 trùng 0 lỗi 0 | nén 3.49x | CPU 100.0%
+[21:23:30] HOÀN TẤT sau 6.5 phút

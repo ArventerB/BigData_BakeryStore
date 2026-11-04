@@ -1,0 +1,10 @@
+[19:18:32] Cụm Kafka: broker [1, 2, 3] | bootstrap localhost:9092,localhost:9094,localhost:9096
+[19:18:32] Lặp 1 lần | 15.0s mỗi lần | log: results\tv4\logs\run_20261104_191832_pilot.log
+[19:18:32] 2 cấu hình khác nhau × 1 lần = 2 lần chạy
+[19:18:32] [1/1] [1/2]
+[19:18:32] ▶ p6_w4_acks1_b64k_l10_lz4_max | lần 1 | pilot:p6 | đĩa trống 22.5 GB
+[19:18:57]   ✓    317,096 eps | ack p95 1605.3 ms | e2e p95 1920.15 ms | gửi 5,075,000 nhận 5,075,000 mất 0 trùng 0 lỗi 0 | nén 3.48x
+[19:18:57] [1/1] [2/2]
+[19:18:57] ▶ p1_w4_acks1_b64k_l10_lz4_max | lần 1 | pilot:p1 | đĩa trống 21.8 GB
+[19:20:05]   ✓    522,393 eps | ack p95 1093.35 ms | e2e p95 46195.5 ms | gửi 8,175,000 nhận 8,175,000 mất 0 trùng 0 lỗi 0 | nén 3.52x
+[19:20:05] HOÀN TẤT sau 1.5 phút

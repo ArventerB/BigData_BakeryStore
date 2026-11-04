@@ -1,0 +1,2 @@
+[Soak] Simulator TV3: D:\DATA\Code\BigData_BakeryStore\simulator\simulator.py --mode kafka --rate 2000 --duration 1800 --workers 2 --profile daily --day-seconds 1800 --seed 2026 --dirty-kinds duplicate --dirty-rate 0.005 --stats-csv --report-every 10 --tag tv4-soak30m
+[Soak] gửi 3,599,990 | nhận 3,599,990 | mất 0 | trùng phát hiện 17918 / đã chèn 17918 | e2e p95 50.62 ms | lag max 176

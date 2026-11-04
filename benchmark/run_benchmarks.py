@@ -1,373 +1,451 @@
 """
-Orchestrator tu dong hoa toan bo 6 kich ban Benchmark cho TV4 (Bakery Store).
+Bộ điều phối thí nghiệm benchmark của TV4 – Bakery Store (chạy trên cụm Kafka KRaft 3 broker THẬT).
 
-Cac kich ban thuc nghiem quy chuan:
-  [Nhom 1: Partition Scaling]
-    1. p1_partition:           Topic bakery.bench.p1 (1 partition, 2 workers)
-    2. p3_partitions:          Topic bakery.bench.p3 (3 partitions, 2 workers)
-    3. p6_partitions:          Topic bakery.bench.p6 (6 partitions, 4 workers)
+Mỗi lần chạy (run):
+  1. Kiểm tra cụm khoẻ (3 broker, mọi partition đủ 3 bản sao in-sync) và dung lượng đĩa còn trống.
+  2. Xoá + tạo lại topic benchmark (giữ đúng spec của TV1: RF=3, min.insync.replicas=2) để mỗi lần đo bắt đầu
+     từ topic rỗng và dữ liệu cũ không chiếm đĩa.
+  3. Khởi động consumer kiểm chứng (bench_consumer.py) tại offset đầu → khởi động N producer (load_generator.py)
+     → mọi producer bắt đầu cùng một thời điểm.
+  4. Producer gửi trong --duration giây rồi flush; consumer đọc tới khi lag = 0 (đã nhận hết những gì broker giữ).
+  5. Ghi results/tv4/raw/<cấu hình>_r<lần>.json (tổng kết) và .csv (số liệu từng giây).
 
-  [Nhom 2: Producer Parameter Tuning]
-    4. tuning_unbatched:       batch=0, linger=0ms, nén=none, acks=1 (Baseline)
-    5. tuning_critical_lz4:    batch=64KB, linger=10ms, nén=lz4, acks=all (Don hang/Thanh toan)
-    6. tuning_throughput_lz4:  batch=128KB, linger=20ms, nén=lz4, acks=1 (Clickstream toc do cao)
+Không có chế độ "giả lập": nếu không kết nối được Kafka thì dừng và báo lỗi.
 
-Dau ra tu dong:
-  - Cac file ket qua .csv va .json trong thu muc results/
-  - Do thi thoi gian thuc .png cho tung kich ban
-  - 2 Bieu do so sanh tong hop:
-      + results/benchmark_partition_scaling.png
-      + results/benchmark_producer_tuning.png
-  - Ban tong hop bao cao ket qua cho TV5: results/tv4_benchmark_report.md
+Ví dụ:
+  python benchmark/run_benchmarks.py --list
+  python benchmark/run_benchmarks.py --experiments pilot --reps 1 --duration 15
+  python benchmark/run_benchmarks.py --experiments all --reps 3 --duration 30
+  python benchmark/run_benchmarks.py --experiments fault --reps 2
+Sau đó: python benchmark/summarize.py && python benchmark/plot_results.py
 """
 import argparse
 import csv
 import json
+import multiprocessing as mp
 import os
-import socket
+import shutil
+import subprocess
 import sys
 import threading
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Console Windows UTF-8
+import psutil
+
+from bench_consumer import ConsumerGroup
+from bench_utils import DEFAULT_BOOTSTRAP, latency_summary
+from load_generator import ProducerGroup, summarize_producers
+
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-from load_generator import run_load_generator
-from plot_results import plot_compare, plot_timeseries
+ROOT = Path(__file__).resolve().parent.parent
+OUT_DIR = ROOT / "results" / "tv4"
+LOG_FILE: Path | None = None
 
-DEFAULT_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP", "localhost:9092,localhost:9094,localhost:9096")
+TOPIC_PARTITIONS = {"bakery.bench.p1": 1, "bakery.bench.p3": 3, "bakery.bench.p6": 6}
+# như scripts/create_topics.ps1 của TV1; file.delete.delay.ms=1s để topic bị xoá giải phóng bộ nhớ ngay
+TOPIC_CONFIG = {"min.insync.replicas": "2", "file.delete.delay.ms": "1000"}
 
-
-def check_kafka_connection(bootstrap: str = DEFAULT_BOOTSTRAP) -> bool:
-    """Kiem tra xem co the ket noi toi it nhat 1 broker Kafka hay khong."""
-    brokers = [b.strip() for b in bootstrap.split(",") if b.strip()]
-    for b in brokers:
-        parts = b.split(":")
-        host = parts[0]
-        port = int(parts[1]) if len(parts) > 1 else 9092
-        try:
-            with socket.create_connection((host, port), timeout=1.5):
-                return True
-        except (socket.timeout, ConnectionRefusedError, OSError):
-            continue
-    return False
+# Cấu hình gốc: mỗi thí nghiệm chỉ thay đổi MỘT nhóm tham số so với cấu hình này
+BASE = {"topic": "bakery.bench.p6", "workers": 4, "acks": "1", "batch_size": 65536, "linger_ms": 10,
+        "compression": "lz4", "rate": 0}
+# Hai bộ cấu hình producer của TV1 (scripts/producer_config.py)
+TV1_CRITICAL = {"acks": "all", "batch_size": 65536, "linger_ms": 10, "compression": "lz4"}
+TV1_CLICKSTREAM = {"acks": "1", "batch_size": 131072, "linger_ms": 20, "compression": "lz4"}
 
 
-BENCHMARK_SCENARIOS = [
-    # Nhom 1: Khao sat Partitions
-    {
-        "id": 1,
-        "tag": "scen1_partition_p1",
-        "name": "1 Partition (bakery.bench.p1)",
-        "group": "partition_scaling",
-        "topic": "bakery.bench.p1",
-        "workers": 2,
-        "acks": "1",
-        "batch_size": 65536,
-        "linger_ms": 10,
-        "compression": "lz4",
-        "description": "Đo thông lượng và độ trễ trên 1 partition duy nhất (giới hạn tuần tự)"
-    },
-    {
-        "id": 2,
-        "tag": "scen2_partition_p3",
-        "name": "3 Partitions (bakery.bench.p3)",
-        "group": "partition_scaling",
-        "topic": "bakery.bench.p3",
-        "workers": 2,
-        "acks": "1",
-        "batch_size": 65536,
-        "linger_ms": 10,
-        "compression": "lz4",
-        "description": "Đo hiệu năng trên 3 partitions (tương ứng 3 broker KRaft của nhóm)"
-    },
-    {
-        "id": 3,
-        "tag": "scen3_partition_p6",
-        "name": "6 Partitions (bakery.bench.p6)",
-        "group": "partition_scaling",
-        "topic": "bakery.bench.p6",
-        "workers": 4,
-        "acks": "1",
-        "batch_size": 65536,
-        "linger_ms": 10,
-        "compression": "lz4",
-        "description": "Đo hiệu năng khi tăng lên 6 partitions với 4 producer song song"
-    },
+def experiments(latency_rate: int, load_rates: list[int]) -> dict:
+    """Danh sách thí nghiệm: tên → (mô tả, [(nhãn, cấu hình ghi đè)])."""
+    return {
+        "E1_partitions": ("Số partition 1/3/6 (4 producer, acks=1, 64KB, 10ms, lz4, tốc độ tối đa)",
+                          [(f"p{n}", {"topic": f"bakery.bench.p{n}"}) for n in (1, 3, 6)]),
+        "E1b_partitions_producer_only": ("Như E1 nhưng KHÔNG chạy consumer kiểm chứng (tách ảnh hưởng tranh CPU)",
+                                         [(f"p{n}", {"topic": f"bakery.bench.p{n}", "verify": False})
+                                          for n in (1, 3, 6)]),
+        "E2_producers": ("Số producer 1/2/4/8 trên topic 6 partition",
+                         [(f"{w} producer", {"workers": w}) for w in (1, 2, 4, 8)]),
+        "E3_batch": ("batch.size 16KB/64KB/256KB/1MB (linger 10ms, lz4)",
+                     [(lbl, {"batch_size": b}) for lbl, b in
+                      (("16KB", 16384), ("64KB", 65536), ("256KB", 262144), ("1MB", 1000000))]),
+        "E4_linger": ("linger.ms 0/5/20/50 ở tốc độ tối đa (batch 128KB, lz4)",
+                      [(f"{l}ms", {"batch_size": 131072, "linger_ms": l}) for l in (0, 5, 20, 50)]),
+        "E5_compression": ("Thuật toán nén (cấu hình clickstream của TV1: acks=1, 128KB, 20ms)",
+                           [(c, {**TV1_CLICKSTREAM, "compression": c})
+                            for c in ("none", "gzip", "snappy", "lz4", "zstd")]),
+        "E6_acks": ("acks 0/1/all (64KB, 10ms, lz4)",
+                    [(f"acks={a}", {"acks": a}) for a in ("0", "1", "all")]),
+        "E7_latency_linger": (f"Độ trễ theo linger.ms ở tải cố định {latency_rate:,} event/s (128KB, lz4, acks=1)",
+                              [(f"{l}ms", {"batch_size": 131072, "linger_ms": l, "rate": latency_rate})
+                               for l in (0, 5, 20, 50)]),
+        "E8_load_curve": ("Độ trễ theo tải – cấu hình đơn hàng của TV1 (acks=all, 64KB, 10ms, lz4) trên topic 3 partition",
+                          [(f"{r // 1000}k eps" if r else "tối đa", {**TV1_CRITICAL, "topic": "bakery.bench.p3", "rate": r})
+                           for r in load_rates]),
+    }
 
-    # Nhom 2: Khao sat Producer Tuning
-    {
-        "id": 4,
-        "tag": "scen4_tuning_unbatched",
-        "name": "Unbatched & No Compression (Baseline)",
-        "group": "producer_tuning",
-        "topic": "bakery.bench.p3",
-        "workers": 2,
-        "acks": "1",
-        "batch_size": 0,
-        "linger_ms": 0,
-        "compression": "none",
-        "description": "Gửi từng message đơn lẻ ngay lập tức, không nén dữ liệu"
-    },
-    {
-        "id": 5,
-        "tag": "scen5_tuning_critical_lz4",
-        "name": "Critical Orders (acks=all, 64KB, lz4)",
-        "group": "producer_tuning",
-        "topic": "bakery.bench.p3",
-        "workers": 2,
-        "acks": "all",
-        "batch_size": 65536,
-        "linger_ms": 10,
-        "compression": "lz4",
-        "description": "Cấu hình chuẩn cho đơn hàng: acks=all bảo đảm Zero Data Loss, nén LZ4"
-    },
-    {
-        "id": 6,
-        "tag": "scen6_tuning_throughput_lz4",
-        "name": "High Throughput (acks=1, 128KB, lz4)",
-        "group": "producer_tuning",
-        "topic": "bakery.bench.p3",
-        "workers": 4,
-        "acks": "1",
-        "batch_size": 131072,
-        "linger_ms": 20,
-        "compression": "lz4",
-        "description": "Cấu hình tối ưu lưu lượng clickstream: batch 128KB, linger 20ms, nén LZ4"
-    },
+
+FAULT_RUNS = [  # tắt đột ngột (docker kill) broker đang làm leader partition 0 ở giây 30, bật lại ở giây 60
+    ("acks=all", {**TV1_CRITICAL, "topic": "bakery.bench.p3", "rate": 5000, "workers": 2}),
+    ("acks=1", {**TV1_CRITICAL, "acks": "1", "topic": "bakery.bench.p3", "rate": 5000, "workers": 2}),
 ]
 
 
-def generate_simulated_results(scenario: dict, duration: int) -> tuple[dict, str]:
-    """Sinh so lieu mo phong sat voi thuc te neu Kafka offline (phuc vu kiem thu truoc)."""
-    import random
-    sid = scenario["id"]
-    tag = scenario["tag"]
-    stamp = int(time.time()) + sid
-    results_dir = Path("results")
-    results_dir.mkdir(parents=True, exist_ok=True)
+def log(msg: str):
+    line = f"[{datetime.now():%H:%M:%S}] {msg}"
+    print(line, flush=True)
+    if LOG_FILE:
+        with open(LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
 
-    # Thong so ti le tuy theo kich ban
-    rates_map = {
-        1: (8500, 9500, 4.2),    # p1: 9k eps, p95 4.2ms
-        2: (22000, 26000, 2.5),  # p3: 24k eps, p95 2.5ms
-        3: (38000, 45000, 2.1),  # p6: 42k eps, p95 2.1ms
-        4: (2800, 3400, 1.2),    # unbatched: 3k eps, p95 1.2ms (latency ack nhanh nhung throughput cuc thap)
-        5: (18500, 21000, 3.8),  # critical acks=all: 20k eps, p95 3.8ms
-        6: (35000, 41000, 4.9),  # high throughput: 38k eps, p95 4.9ms
-    }
-    low_eps, high_eps, base_p95 = rates_map[sid]
 
-    csv_path = results_dir / f"consumer_{tag}_{stamp}.csv"
+def config_id(c: dict) -> str:
+    rate = "max" if not c["rate"] else f"{c['rate'] // 1000}k"
+    b = c["batch_size"]
+    bl = f"{b // 1024}k" if b < 1_000_000 else "1m"
+    return (f"p{TOPIC_PARTITIONS[c['topic']]}_w{c['workers']}_acks{c['acks']}_b{bl}_l{c['linger_ms']}"
+            f"_{c['compression']}_{rate}" + ("_noverify" if c.get("verify") is False else ""))
+
+
+# ------------------------------------------------------------------ Kafka admin
+def admin():
+    from confluent_kafka.admin import AdminClient
+    return AdminClient({"bootstrap.servers": DEFAULT_BOOTSTRAP})
+
+
+def cluster_state(adm, topics: list[str]) -> dict:
+    md = adm.list_topics(timeout=10)
+    st = {"brokers": sorted(md.brokers), "partitions": 0, "no_leader": 0, "under_replicated": 0, "leaders": {}}
+    for t in topics:
+        tm = md.topics.get(t)
+        if tm is None or tm.error is not None:
+            st["no_leader"] += 1
+            continue
+        for pid, pm in tm.partitions.items():
+            st["partitions"] += 1
+            st["leaders"][f"{t}:{pid}"] = pm.leader
+            st["no_leader"] += pm.leader < 0
+            st["under_replicated"] += len(pm.isrs) < len(pm.replicas)
+    return st
+
+
+def wait_healthy(adm, topics: list[str], timeout: float = 240) -> float:
+    t0 = time.time()
+    while True:
+        try:
+            st = cluster_state(adm, topics)
+            if len(st["brokers"]) == 3 and st["no_leader"] == 0 and st["under_replicated"] == 0:
+                return time.time() - t0
+        except Exception:
+            pass
+        if time.time() - t0 > timeout:
+            raise RuntimeError(f"Cụm Kafka chưa khoẻ sau {timeout}s: {topics}")
+        time.sleep(1)
+
+
+def reset_topic(adm, name: str):
+    from confluent_kafka import KafkaException
+    from confluent_kafka.admin import NewTopic
+
+    try:
+        adm.delete_topics([name], operation_timeout=30)[name].result()
+    except KafkaException:
+        pass  # topic chưa tồn tại
+    for _ in range(120):
+        if name not in adm.list_topics(timeout=10).topics:
+            break
+        time.sleep(0.5)
+    for _ in range(60):
+        try:
+            adm.create_topics([NewTopic(name, TOPIC_PARTITIONS[name], 3, config=TOPIC_CONFIG)],
+                              operation_timeout=30)[name].result()
+            break
+        except KafkaException:
+            time.sleep(1)  # topic cũ đang được xoá nốt
+    wait_healthy(adm, [name], timeout=120)
+
+
+def start_offsets(topics: list[str]) -> list[tuple[str, int, int]]:
+    from confluent_kafka import Consumer, TopicPartition
+    c = Consumer({"bootstrap.servers": DEFAULT_BOOTSTRAP, "group.id": "tv4-offsets"})
+    out = []
+    for t in topics:
+        for _ in range(60):  # topic vừa tạo lại: chờ metadata lan tới mọi broker
+            tm = c.list_topics(t, timeout=10).topics.get(t)
+            if tm and tm.error is None and len(tm.partitions) == TOPIC_PARTITIONS.get(t, len(tm.partitions)) \
+                    and all(pm.leader >= 0 for pm in tm.partitions.values()):
+                break
+            time.sleep(0.5)
+        for pid in sorted(tm.partitions):
+            for attempt in range(60):  # leader có thể chưa nạp xong partition vừa tạo
+                try:
+                    _, hi = c.get_watermark_offsets(TopicPartition(t, pid), timeout=10, cached=False)
+                    break
+                except Exception:
+                    if attempt == 59:
+                        raise
+                    time.sleep(0.5)
+            out.append((t, pid, hi))
+    c.close()
+    return out
+
+
+def check_disk(path: str, min_free_gb: float):
+    free = shutil.disk_usage(path).free / 1e9
+    if free < min_free_gb:
+        raise SystemExit(f"[DỪNG] Ổ {path} chỉ còn {free:.1f} GB (< {min_free_gb} GB). Dừng để tránh đầy đĩa.")
+    return free
+
+
+# ------------------------------------------------------------------ một lần chạy
+def fault_injector(adm, topic: str, start_at: float, kill_at: float, restart_at: float, events: list,
+                   stop: threading.Event):
+    """Tắt đột ngột broker đang làm leader partition 0, rồi bật lại; ghi trạng thái cụm mỗi giây."""
+    leader = cluster_state(adm, [topic])["leaders"][f"{topic}:0"]
+    container = f"kafka-{leader}"
+    killed = restarted = False
+    while not stop.is_set():
+        el = time.time() - start_at
+        if not killed and el >= kill_at:
+            subprocess.run(["docker", "kill", container], capture_output=True)
+            events.append({"t": round(time.time() - start_at, 2), "event": f"docker kill {container}"})
+            killed = True
+        if killed and not restarted and el >= restart_at:
+            subprocess.run(["docker", "start", container], capture_output=True)
+            events.append({"t": round(time.time() - start_at, 2), "event": f"docker start {container}"})
+            restarted = True
+        try:
+            st = cluster_state(adm, [topic])
+            events.append({"t": round(time.time() - start_at, 2), "brokers": len(st["brokers"]),
+                           "under_replicated": st["under_replicated"], "no_leader": st["no_leader"],
+                           "leaders": list(st["leaders"].values())})
+        except Exception as e:
+            events.append({"t": round(time.time() - start_at, 2), "error": str(e)[:200]})
+        stop.wait(1.0)
+
+
+def run_once(cfg: dict, rep: int, exp_names: list[str], args, adm, fault: dict | None = None,
+             duration: float | None = None, prefix: str = "") -> dict:
+    free = check_disk(args.disk_path, args.min_free_gb)
+    topic = cfg["topic"]
+    cid = prefix + config_id(cfg) + (f"_fault_{fault['label'].replace('=', '')}" if fault else "")
+    log(f"▶ {cid} | lần {rep} | {', '.join(exp_names)} | đĩa trống {free:.1f} GB")
+
+    wait_healthy(adm, [])  # đủ 3 broker (topic có thể chưa tồn tại – reset_topic sẽ tạo)
+    reset_topic(adm, topic)
+    run_id = int(time.time() * 1000) & 0xFFFFFFFF
+    duration = fault["duration"] if fault else (duration or args.duration)
+    pcfg = {**cfg, "bootstrap": DEFAULT_BOOTSTRAP, "duration": duration, "run_id": run_id, "seed": 42 + rep}
+    ccfg = {"bootstrap": DEFAULT_BOOTSTRAP, "run_id": run_id, "mode": "header", "warmup_sec": 3.0,
+            "idle_timeout": 60.0 if fault else 20.0, "max_drain_sec": 600.0}
+
+    verify = cfg.get("verify", True)
+    start_at = mp.Value("d", 0.0)
+    assigns = start_offsets([topic])
+    consumers = ConsumerGroup(ccfg, assigns, start_at, n_proc=min(3, len(assigns))) if verify else None
+    if consumers:
+        consumers.start()
+    producers = ProducerGroup(pcfg, start_at)
+    producers.start()
+    t_start = time.time() + 1.0
+    start_at.value = t_start
+    producers.release()
+
+    # CPU toàn máy mỗi giây (gồm cả VM Docker chạy broker) – để giải thích giới hạn của thí nghiệm 1 máy
+    cpu: dict[int, float] = {}
+    stop_cpu = threading.Event()
+
+    def cpu_loop():
+        psutil.cpu_percent(None)
+        while not stop_cpu.wait(max(0.0, 1.0 - (time.time() - t_start) % 1.0)):
+            cpu[int(time.time() - t_start)] = psutil.cpu_percent(None)
+
+    threading.Thread(target=cpu_loop, daemon=True).start()
+
+    events, stop_fault, th = [], threading.Event(), None
+    if fault:
+        th = threading.Thread(target=fault_injector, daemon=True,
+                              args=(admin(), topic, t_start, fault["kill_at"], fault["restart_at"], events, stop_fault))
+        th.start()
+
+    pdone = producers.collect(timeout=duration + 300)
+    psum = summarize_producers(pdone)
+    cdone = consumers.finish(timeout=900) if consumers else []
+    stop_cpu.set()
+    if th:
+        # tiếp tục ghi trạng thái cụm tới khi đủ ISR trở lại
+        try:
+            heal = wait_healthy(adm, [topic], timeout=240)
+        except RuntimeError:
+            heal = None
+        stop_fault.set()
+        th.join(5)
+    try:  # xoá dữ liệu của lần chạy ngay để Kafka giải phóng đĩa sớm (file bị xoá sau ~60s)
+        adm.delete_topics([topic], operation_timeout=30)[topic].result()
+    except Exception:
+        pass
+    received = sum(d["received"] for d in cdone)
+    unique = sum(d["unique"] for d in cdone)
+    dup = sum(d["duplicates"] for d in cdone)
+    firsts = [d["first_msg"] for d in cdone if d["first_msg"]]
+    lasts = [d["last_msg"] for d in cdone if d["last_msg"]]
+    consume_span = (max(lasts) - min(firsts)) if firsts else 0
+    # mất = đã gửi − nhận được (duy nhất) − bị producer báo lỗi (không được ghi) − chưa flush kịp
+    lost_after_ack = (psum["sent"] - unique - psum["failed"] - psum["not_flushed"]) if verify else None
+
+    # gộp số liệu từng giây
+    sec_rows: dict[int, dict] = {}
+    for s, n in psum["sec_sent"].items():
+        sec_rows.setdefault(int(s), {})["produced"] = n
+    for d in cdone:
+        for s, (n, p50, p95, p99) in d["sec_rows"].items():
+            row = sec_rows.setdefault(int(s), {})
+            row["consumed"] = row.get("consumed", 0) + n
+            # nhiều consumer: lấy phân vị lớn nhất (thận trọng)
+            for k, v in (("e2e_p50_ms", p50), ("e2e_p95_ms", p95), ("e2e_p99_ms", p99)):
+                if v is not None:
+                    row[k] = max(row.get(k, 0), v)
+    for s, v in cpu.items():
+        sec_rows.setdefault(s, {})["host_cpu_pct"] = v
+    secs = [s for s in sec_rows if s >= 0]
+    if secs:
+        span = range(0, max(secs) + 1)
+        for d in cdone:  # lag: điền tiếp giá trị gần nhất cho từng consumer rồi cộng
+            last = 0
+            lag = {int(k): v for k, v in d["lag"].items()}
+            for s in span:
+                last = lag.get(s, last)
+                sec_rows.setdefault(s, {})
+                sec_rows[s]["lag"] = sec_rows[s].get("lag", 0) + last
+
+    raw_dir = OUT_DIR / "raw"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    stem = f"{cid}_r{rep}"
+    csv_path = raw_dir / f"{stem}.csv"
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["second", "records", "latency_p50_ms", "latency_p95_ms", "latency_p99_ms", "lag"])
-        total_rec = 0
-        for s in range(1, duration + 1):
-            eps = int(random.uniform(low_eps, high_eps))
-            total_rec += eps
-            p50 = round(base_p95 * 0.6 + random.uniform(-0.2, 0.2), 2)
-            p95 = round(base_p95 + random.uniform(-0.3, 0.3), 2)
-            p99 = round(base_p95 * 1.5 + random.uniform(-0.4, 0.5), 2)
-            lag = random.randint(0, 120) if s % 4 == 0 else 0
-            w.writerow([s, eps, p50, p95, p99, lag])
+        w.writerow(["second", "produced", "consumed", "e2e_p50_ms", "e2e_p95_ms", "e2e_p99_ms", "lag",
+                    "host_cpu_pct"])
+        for s in sorted(x for x in sec_rows if x >= 0):
+            r = sec_rows[s]
+            w.writerow([s, r.get("produced", 0), r.get("consumed", 0), r.get("e2e_p50_ms", ""),
+                        r.get("e2e_p95_ms", ""), r.get("e2e_p99_ms", ""), r.get("lag", ""),
+                        r.get("host_cpu_pct", "")])
+    busy = [v for s, v in cpu.items() if 1 <= s < duration]  # trong lúc producer đang phát
 
-    avg_eps = round(total_rec / duration, 1)
     summary = {
-        "tag": tag,
-        "name": scenario["name"],
-        "timestamp": stamp,
-        "scenario_id": sid,
-        "group": scenario["group"],
-        "topic": scenario["topic"],
-        "config": scenario,
-        "sent_total": total_rec,
-        "records_total": total_rec,
-        "duration_sec": duration,
-        "throughput_eps": avg_eps,
-        "avg_consume_eps": avg_eps,
-        "ack_latency_ms": {
-            "p50": round(base_p95 * 0.6, 2),
-            "p95": base_p95,
-            "p99": round(base_p95 * 1.5, 2)
+        "config_id": cid, "rep": rep, "experiments": exp_names, "run_id": run_id,
+        "started_at": datetime.fromtimestamp(t_start, tz=timezone.utc).isoformat(),
+        "config": {**cfg, "partitions": TOPIC_PARTITIONS[topic], "duration": duration},
+        "producer": {k: v for k, v in psum.items() if k != "sec_sent"},
+        "host_cpu_pct": {"avg_while_producing": round(sum(busy) / len(busy), 1) if busy else None,
+                         "max": max(busy, default=None), "logical_cpus": psutil.cpu_count()},
+        "consumer": {
+            "processes": len(cdone), "received": received, "unique": unique, "duplicates": dup,
+            "foreign": sum(d["foreign"] for d in cdone), "lost_after_ack": lost_after_ack,
+            "consume_eps": round(received / consume_span, 1) if consume_span else None,
+            "drain_after_producer_sec": round(max(lasts) - (t_start + psum["total_sec"]), 2) if lasts else None,
+            "max_lag": max((r.get("lag", 0) for r in sec_rows.values()), default=0) if verify else None,
+            "timed_out": any(d["timed_out"] for d in cdone),
+            "e2e_latency_ms": latency_summary([(d["lat_sample"], d["lat_n"]) for d in cdone]),
+            "verified": verify,
         },
-        "e2e_latency_ms": {
-            "p50": round(base_p95 * 0.6, 2),
-            "p95": base_p95,
-            "p99": round(base_p95 * 1.5, 2)
-        },
-        "per_second_csv": str(csv_path),
+        "fault": {"label": fault["label"], "kill_at": fault["kill_at"], "restart_at": fault["restart_at"],
+                  "time_to_full_isr_after_run_sec": heal, "timeline": events} if fault else None,
+        "per_second_csv": str(csv_path.relative_to(ROOT)),
     }
-
-    json_path = results_dir / f"sim_kafka_{tag}_{stamp}.json"
-    json_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-    return summary, str(csv_path)
-
-
-def write_benchmark_report(summaries: list[dict]):
-    """Tao ban ghi chu bao cao danh cho TV5 tong hop vao Chuong 6 & Chuong 7."""
-    results_dir = Path("results")
-    results_dir.mkdir(parents=True, exist_ok=True)
-    report_path = results_dir / "tv4_benchmark_report.md"
-
-    md = []
-    md.append("# BÁO CÁO KẾT QUẢ THỰC NGHIỆM & BENCHMARK HIỆU NĂNG")
-    md.append("**Người thực hiện:** Thành viên 4 (Phong – Đo lường & Benchmark)")
-    md.append(f"**Thời gian thực hiện:** {datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M UTC')}")
-    md.append("**Dự án:** Hệ thống Thu nhận Dữ liệu Tiệm Bánh (Bakery Store Streaming Pipeline)")
-    md.append("**Tài liệu bàn giao cho:** TV5 (Chương 6 – Thực nghiệm & Đánh giá, Chương 7 – Kết quả Benchmark)\n")
-    md.append("---\n")
-
-    md.append("## 1. TỔNG HỢP KẾT QUẢ 6 KỊCH BẢN THÍ NGHIỆM\n")
-    md.append("| STT | Kịch bản Thí nghiệm | Topic | Partitions | Cấu hình Producer | Throughput (eps) | p95 Latency (ms) |")
-    md.append("|:---:|---|:---:|:---:|---|:---:|:---:|")
-
-    for s in summaries:
-        tag = s.get("tag", "")
-        name = s.get("name", tag)
-        topic = s.get("topic", "")
-        eps = s.get("throughput_eps", 0)
-        p95 = s.get("ack_latency_ms", {}).get("p95", 0)
-        conf_str = "-"
-        if "config" in s:
-            c = s["config"]
-            batch_label = "0" if c.get("batch_size", 0) == 0 else f"{c.get('batch_size', 0) // 1024}KB"
-            conf_str = f"acks={c.get('acks', '1')}, batch={batch_label}, linger={c.get('linger_ms', 0)}ms, {c.get('compression', 'lz4')}"
-        parts = 1 if "p1" in topic else (6 if "p6" in topic else 3)
-        md.append(f"| **{s.get('scenario_id', '')}** | {name} | `{topic}` | {parts} | {conf_str} | **{eps:,.0f}** | **{p95} ms** |")
-
-    md.append("\n---\n")
-    md.append("## 2. PHÂN TÍCH CHUYÊN SÂU ĐỐI CHIẾU\n")
-
-    md.append("### 2.1. Đánh giá Mở rộng Phân vùng (Partition Scalability)")
-    md.append("![So sánh Partitions](benchmark_partition_scaling.png)\n")
-    md.append("- **Từ 1 Partition lên 3 Partitions:** Throughput tăng gấp **2.5 – 2.8 lần**. Lý do: 1 partition chỉ có thể xử lý tuần tự trên 1 Broker duy nhất; khi nâng lên 3 partitions, tải được phân tán đều trên cả 3 Broker của cụm KRaft (Node 1, Node 2, Node 3).")
-    md.append("- **Từ 3 Partitions lên 6 Partitions:** Throughput tiếp tục tăng trưởng gần **1.7 lần** khi có 4 Producer song song. Mỗi Broker lúc này phụ trách 2 partition leaders, tận dụng tối đa đa nhân CPU và tối ưu hóa hàng đợi I/O trên đĩa.")
-
-    md.append("\n### 2.2. Đánh giá Tinh chỉnh Producer (Producer Parameter Tuning)")
-    md.append("![So sánh Tinh chỉnh Producer](benchmark_producer_tuning.png)\n")
-    md.append("- **Kịch bản Unbatched (`batch=0, linger=0ms`):** Mặc dù p95 ack latency chỉ khoảng ~1ms, nhưng thông lượng bị bóp nghẽn trầm trọng (chỉ đạt ~3,000 eps) do chi phí mở gói tin TCP/IP overhead cho từng message riêng lẻ.")
-    md.append("- **Kịch bản Critical (`acks=all, batch=64KB, linger=10ms, lz4`):** Đạt khoảng ~20,000 eps với độ an toàn dữ liệu 100% (Zero Data Loss). Sự kết hợp giữa bộ đệm 64KB và nén LZ4 giúp giảm kích thước gói mạng đáng kể trong khi chỉ trễ thêm vài mili-giây.")
-    md.append("- **Kịch bản High Throughput (`acks=1, batch=128KB, linger=20ms, lz4`):** Đạt hiệu năng đỉnh tiệm cận ~40,000 eps, hoàn toàn đáp ứng được kịch bản Flash Sale hoặc giờ cao điểm đặt bánh của hàng triệu người dùng.")
-
-    md.append("\n---\n")
-    md.append("## 3. KHUYẾN NGHỊ VẬN HÀNH CHO HỆ THỐNG TIỆM BÁNH")
-    md.append("1. **Với dữ liệu Đơn hàng (`bakery.orders`) & Thanh toán (`bakery.payments`):** Bắt buộc duy trì cấu hình Kịch bản 5 (`acks=all`, `min.insync.replicas=2`, `retries=5`).")
-    md.append("2. **Với dữ liệu Clickstream (`bakery.user-events`):** Áp dụng cấu hình Kịch bản 6 (`batch_size=128KB`, `linger_ms=20ms`) trên topic có tối thiểu 6 partitions để đạt thông lượng cao nhất.")
-    md.append("3. **Bằng chứng thực nghiệm:** Toàn bộ file log, biểu đồ đã được lưu trữ hoàn chỉnh tại thư mục `results/`.")
-
-    report_path.write_text("\n".join(md), encoding="utf-8")
-    print(f"\n[V] Đã tạo thành công Báo cáo tổng hợp TV4: {report_path}")
-    return report_path
+    (raw_dir / f"{stem}.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    c, p = summary["consumer"], summary["producer"]
+    log(f"  ✓ {p['throughput_eps']:>10,.0f} eps | ack p95 {p['ack_latency_ms']['p95']} ms | "
+        f"e2e p95 {c['e2e_latency_ms']['p95']} ms | gửi {p['sent']:,} nhận {unique:,} "
+        f"mất {lost_after_ack} trùng {dup} lỗi {p['failed']} | nén {p['compression_ratio']}x"
+        f" | CPU {summary['host_cpu_pct']['avg_while_producing']}%"
+        + (" | CONSUMER TIMEOUT" if c["timed_out"] else ""))
+    return summary
 
 
-def run_all(duration: int = 15, force_simulated: bool = False):
-    print("=" * 70)
-    print("BẮT ĐẦU CHẠY TOÀN BỘ 6 KỊCH BẢN BENCHMARK CHO TV4 (BAKERY STORE)")
-    print(f"Thời gian mỗi kịch bản: {duration} giây | Bootstrap: {DEFAULT_BOOTSTRAP}")
-    print("=" * 70)
-
-    kafka_online = check_kafka_connection(DEFAULT_BOOTSTRAP)
-    use_simulation = force_simulated or not kafka_online
-
-    if not kafka_online:
-        print("[!] Không thể kết nối tới Kafka Broker tại: " + DEFAULT_BOOTSTRAP)
-        if not force_simulated:
-            print("[!] Hướng dẫn: Mở Docker Desktop và chạy lệnh sau để khởi động Kafka:")
-            print("      cd scripts; docker compose up -d; .\\create_topics.ps1")
-            print("[*] Để chạy thử nghiệm và tự động xuất trọn bộ số liệu mẫu cho báo cáo ngay, hệ thống sẽ chạy ở chế độ [Tự Động Mô Phỏng Thực Nghiệm].\n")
-            use_simulation = True
-    else:
-        print("[V] Kết nối tới cụm Kafka KRaft thành công! Sẽ tiến hành đo lường thực tế trên cụm.\n")
-
-    summaries = []
-    generated_csvs = []
-
-    for scen in BENCHMARK_SCENARIOS:
-        sid = scen["id"]
-        tag = scen["tag"]
-        print("-" * 70)
-        print(f"[*] KỊCH BẢN {sid}/6: {scen['name']}")
-        print(f"    Mô tả: {scen['description']}")
-        print(f"    Cấu hình: topic={scen['topic']}, workers={scen['workers']}, acks={scen['acks']}, batch={scen['batch_size']}, linger={scen['linger_ms']}ms, nén={scen['compression']}")
-        print("-" * 70)
-
-        if use_simulation:
-            summary, csv_path = generate_simulated_results(scen, duration)
-            time.sleep(0.5)
-        else:
-            # Chay thuc te voi load_generator
-            summary = run_load_generator(
-                topic=scen["topic"],
-                bootstrap=DEFAULT_BOOTSTRAP,
-                rate=0,  # Max speed
-                duration=duration,
-                workers=scen["workers"],
-                acks=scen["acks"],
-                batch_size=scen["batch_size"],
-                linger_ms=scen["linger_ms"],
-                compression=scen["compression"],
-                tag=tag
-            )
-            # Tim file CSV gan nhat cua kich ban
-            csv_candidates = list(Path("results").glob(f"consumer_{tag}_*.csv"))
-            csv_path = str(csv_candidates[-1]) if csv_candidates else ""
-
-        summary["scenario_id"] = sid
-        summary["name"] = scen["name"]
-        summary["group"] = scen["group"]
-        summary["topic"] = scen["topic"]
-        summaries.append(summary)
-
-        if csv_path and Path(csv_path).exists():
-            generated_csvs.append(csv_path)
-            # Ve ngay bieu do time-series cho kich ban nay
-            try:
-                plot_timeseries(csv_path)
-            except Exception as e:
-                print(f"[!] Khong the ve bieu do cho {csv_path}: {e}")
-
-    # Ve bieu do so sanh Nhom 1: Partition Scaling
-    p_files = [f"results/sim_kafka_{s['tag']}_*.json" for s in summaries if s["group"] == "partition_scaling"]
-    plot_compare(
-        p_files,
-        output_name="benchmark_partition_scaling.png",
-        title="Thực nghiệm 1: Thông lượng & Độ trễ theo Số Phân Vùng (Partition Scaling)"
-    )
-
-    # Ve bieu do so sanh Nhom 2: Producer Tuning
-    t_files = [f"results/sim_kafka_{s['tag']}_*.json" for s in summaries if s["group"] == "producer_tuning"]
-    plot_compare(
-        t_files,
-        output_name="benchmark_producer_tuning.png",
-        title="Thực nghiệm 2: Đánh giá Tinh chỉnh Tham số Producer (Producer Tuning)"
-    )
-
-    # Xuat file Markdown tong hop ket qua gui TV5
-    write_benchmark_report(summaries)
-
-    print("\n" + "=" * 70)
-    print("HOÀN TẤT TOÀN BỘ 6 KỊCH BẢN BENCHMARK CHO TV4!")
-    print("=" * 70)
-    print("Danh mục sản phẩm đã bàn giao tại thư mục results/:")
-    print("  1. results/benchmark_partition_scaling.png  (Biểu đồ so sánh Partition)")
-    print("  2. results/benchmark_producer_tuning.png    (Biểu đồ so sánh Producer Tuning)")
-    print("  3. results/tv4_benchmark_report.md          (Báo cáo phân tích chuyên sâu cho TV5)")
-    print("  4. Toàn bộ các file CSV chuỗi thời gian & file JSON cấu hình chi tiết")
-    print("=" * 70 + "\n")
-
-
+# ------------------------------------------------------------------ main
 def main():
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--duration", type=int, default=15, help="Thời gian chạy mỗi kịch bản (giây)")
-    ap.add_argument("--simulated", action="store_true", help="Chạy giả lập để kiểm thử pipeline tạo biểu đồ ngay")
+    global LOG_FILE
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--experiments", default="all", help="all | pilot | fault | danh sách E1_partitions,E2_producers,...")
+    ap.add_argument("--reps", type=int, default=3, help="số lần lặp mỗi cấu hình")
+    ap.add_argument("--duration", type=float, default=30, help="số giây phát tải mỗi lần")
+    ap.add_argument("--latency-rate", type=int, default=20000, help="tải cố định cho E7 (event/s)")
+    ap.add_argument("--load-rates", default="5000,10000,20000,50000,100000,150000,200000,250000,300000,350000,400000,0",
+                    help="các mức tải cho E8 (event/s, 0 = tối đa)")
+    ap.add_argument("--disk-path", default=Path(__file__).resolve().anchor or "/",
+                    help="ổ đĩa chứa dữ liệu Docker để kiểm tra dung lượng trống")
+    ap.add_argument("--min-free-gb", type=float, default=8.0)
+    ap.add_argument("--list", action="store_true")
     args = ap.parse_args()
 
-    run_all(duration=args.duration, force_simulated=args.simulated)
+    exps = experiments(args.latency_rate, [int(x) for x in args.load_rates.split(",")])
+    if args.list:
+        for name, (desc, runs) in exps.items():
+            print(f"{name}: {desc}")
+            for lbl, ov in runs:
+                print(f"    {lbl:<12} {config_id({**BASE, **ov})}")
+        print("fault: thí nghiệm chịu lỗi (docker kill leader) – " + ", ".join(l for l, _ in FAULT_RUNS))
+        return
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    (OUT_DIR / "logs").mkdir(exist_ok=True)
+    LOG_FILE = OUT_DIR / "logs" / f"run_{datetime.now():%Y%m%d_%H%M%S}_{args.experiments.replace(',', '+')}.log"
+
+    adm = admin()
+    try:
+        st = cluster_state(adm, list(TOPIC_PARTITIONS))
+    except Exception as e:
+        raise SystemExit(f"[LỖI] Không kết nối được Kafka tại {DEFAULT_BOOTSTRAP}: {e}\n"
+                         "Hãy bật Docker Desktop rồi chạy: cd scripts; docker compose up -d; .\\create_topics.ps1")
+    log(f"Cụm Kafka: broker {st['brokers']} | bootstrap {DEFAULT_BOOTSTRAP}")
+    log(f"Lặp {args.reps} lần | {args.duration}s mỗi lần | log: {LOG_FILE.relative_to(ROOT)}")
+
+    try:
+        _run(args, exps, adm)
+    finally:  # trả lại 3 topic benchmark như TV1 đã tạo
+        for t in TOPIC_PARTITIONS:
+            try:
+                reset_topic(adm, t)
+            except Exception as e:
+                log(f"[!] Không tạo lại được {t}: {e}")
+
+
+def _run(args, exps: dict, adm):
+    if args.experiments == "fault":
+        for rep in range(1, args.reps + 1):
+            for label, ov in FAULT_RUNS:
+                run_once({**BASE, **ov}, rep, ["E9_fault"], args, adm,
+                         fault={"label": label, "duration": 90, "kill_at": 30, "restart_at": 60})
+        return
+
+    if args.experiments == "pilot":
+        selected = {"pilot": ("Chạy thử", [("p6", {}), ("p1", {"topic": "bakery.bench.p1"})])}
+    elif args.experiments == "all":
+        selected = exps
+    else:
+        selected = {k: exps[k] for k in args.experiments.split(",")}
+
+    # Gộp các cấu hình trùng nhau giữa các thí nghiệm để không chạy lặp lại
+    plan: dict[str, dict] = {}
+    for name, (_, runs) in selected.items():
+        for lbl, ov in runs:
+            cfg = {**BASE, **ov}
+            plan.setdefault(config_id(cfg), {"cfg": cfg, "exps": []})["exps"].append(f"{name}:{lbl}")
+    log(f"{len(plan)} cấu hình khác nhau × {args.reps} lần = {len(plan) * args.reps} lần chạy")
+
+    t0 = time.time()
+    if args.experiments != "pilot":  # làm nóng JVM của broker, không tính vào kết quả
+        run_once(dict(BASE), 0, ["warmup"], args, adm, duration=15, prefix="warmup_")
+    for rep in range(1, args.reps + 1):  # xen kẽ các lần lặp để giảm sai lệch theo thời gian
+        for i, (cid, item) in enumerate(plan.items(), 1):
+            log(f"[{rep}/{args.reps}] [{i}/{len(plan)}]")
+            run_once(item["cfg"], rep, item["exps"], args, adm)
+    log(f"HOÀN TẤT sau {(time.time() - t0) / 60:.1f} phút")
 
 
 if __name__ == "__main__":
+    mp.freeze_support()
     main()

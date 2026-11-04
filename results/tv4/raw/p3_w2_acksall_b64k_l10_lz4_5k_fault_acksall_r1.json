@@ -1,0 +1,1107 @@
+{
+  "config_id": "p3_w2_acksall_b64k_l10_lz4_5k_fault_acksall",
+  "rep": 1,
+  "experiments": [
+    "E9_fault"
+  ],
+  "run_id": 2798043257,
+  "started_at": "2026-11-04T13:36:47.884876+00:00",
+  "config": {
+    "topic": "bakery.bench.p3",
+    "workers": 2,
+    "acks": "all",
+    "batch_size": 65536,
+    "linger_ms": 10,
+    "compression": "lz4",
+    "rate": 5000,
+    "partitions": 3,
+    "duration": 90
+  },
+  "producer": {
+    "sent": 449938,
+    "acked": 449938,
+    "failed": 0,
+    "not_flushed": 0,
+    "errors_by_kind": {},
+    "produce_sec": 90.002,
+    "total_sec": 90.007,
+    "throughput_eps": 4998.9,
+    "offered_eps": 4999.2,
+    "raw_mb_per_sec": 1.53,
+    "raw_bytes_per_msg": 306.3,
+    "wire_bytes_per_msg": 121.4,
+    "compression_ratio": 2.52,
+    "ack_latency_ms": {
+      "p50": 18.46,
+      "p95": 3827.7,
+      "p99": 7286.29,
+      "max": 8335.04,
+      "samples": 60000
+    }
+  },
+  "host_cpu_pct": {
+    "avg_while_producing": 24.4,
+    "max": 63.4,
+    "logical_cpus": 16
+  },
+  "consumer": {
+    "processes": 3,
+    "received": 449938,
+    "unique": 449938,
+    "duplicates": 0,
+    "foreign": 0,
+    "lost_after_ack": 0,
+    "consume_eps": 5003.1,
+    "drain_after_producer_sec": 0.02,
+    "max_lag": 962,
+    "timed_out": false,
+    "e2e_latency_ms": {
+      "p50": 31.0,
+      "p95": 4000.03,
+      "p99": 7389.39,
+      "max": 8341.4,
+      "samples": 300000
+    },
+    "verified": true
+  },
+  "fault": {
+    "label": "acks=all",
+    "kill_at": 30,
+    "restart_at": 60,
+    "time_to_full_isr_after_run_sec": 0.0021352767944335938,
+    "timeline": [
+      {
+        "t": -0.99,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 0.01,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 1.02,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 2.04,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 3.05,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 4.07,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 5.09,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 6.11,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 7.11,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 8.13,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 9.13,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 10.14,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 11.15,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 12.15,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 13.16,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 14.18,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 15.18,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 16.19,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 17.2,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 18.21,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 19.21,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 20.22,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 21.23,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 22.24,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 23.24,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 24.25,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 25.27,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 26.28,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 27.28,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 28.29,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 29.29,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 30.83,
+        "event": "docker kill kafka-1"
+      },
+      {
+        "t": 30.83,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 31.84,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 32.86,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 33.87,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 34.88,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 35.89,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 36.9,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 37.91,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 38.91,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 39.93,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 40.93,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 41.94,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 42.94,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 43.95,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 44.97,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 45.99,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 47.0,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 48.02,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 49.04,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 50.05,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 51.05,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 52.06,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 53.06,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 54.07,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 55.08,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 56.09,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 57.1,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 58.1,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 59.12,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 60.47,
+        "event": "docker start kafka-1"
+      },
+      {
+        "t": 60.48,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 61.49,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 62.5,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 63.52,
+        "brokers": 2,
+        "under_replicated": 3,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 64.54,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 65.55,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 66.56,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 67.56,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 68.57,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 69.58,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 70.59,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 71.6,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 72.61,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 73.61,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 74.62,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 75.63,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 76.64,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 77.65,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 78.65,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 79.66,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 80.66,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 81.67,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 82.68,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 83.69,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 84.69,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 85.71,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 86.72,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 87.72,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 88.73,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 89.73,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 90.74,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 91.76,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": 92.78,
+        "brokers": 3,
+        "under_replicated": 0,
+        "no_leader": 0,
+        "leaders": [
+          2,
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "per_second_csv": "results\\tv4\\raw\\p3_w2_acksall_b64k_l10_lz4_5k_fault_acksall_r1.csv"
+}

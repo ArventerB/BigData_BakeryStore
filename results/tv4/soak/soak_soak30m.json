@@ -1,0 +1,59 @@
+{
+  "tag": "soak30m",
+  "started_at": "2026-11-04T13:43:16.079722+00:00",
+  "duration_sec": 1800,
+  "rate_avg_target": 2000,
+  "profile": "daily",
+  "topics": [
+    "bakery.user-events",
+    "bakery.orders",
+    "bakery.payments"
+  ],
+  "simulator": {
+    "sent_total": 3599990,
+    "throughput_eps": 2000.0,
+    "send_errors": 0,
+    "dirty_by_kind": {
+      "duplicate": 17918
+    },
+    "by_event_type": {
+      "page_view": 907860,
+      "product_view": 1525369,
+      "add_to_cart": 434117,
+      "search": 457229,
+      "checkout_start": 109176,
+      "order_placed": 76446,
+      "payment": 78828,
+      "remove_from_cart": 10965
+    },
+    "ack_latency_ms": {
+      "what": "Kafka broker ack",
+      "p50": 49.73,
+      "p95": 50.38,
+      "p99": 50.7
+    }
+  },
+  "consumer": {
+    "received": 3599990,
+    "unique_event_ids": 3582072,
+    "duplicates_detected": 17918,
+    "duplicates_injected": 17918,
+    "records_by_topic": {
+      "bakery.orders": 76446,
+      "bakery.payments": 78828,
+      "bakery.user-events": 3444716
+    },
+    "lost": 0,
+    "timed_out": false,
+    "max_lag": 176,
+    "e2e_latency_ms": {
+      "p50": 43.01,
+      "p95": 50.62,
+      "p99": 51.64,
+      "max": 63.18,
+      "samples": 100000
+    }
+  },
+  "per_second_csv": "results\\tv4\\soak\\soak_soak30m.csv",
+  "simulator_csv": "results\\tv4\\soak\\sim_kafka_tv4-soak30m_1793799796.csv"
+}
