@@ -10,3 +10,7 @@ venv/
 .pytest_cache/
 # tập dữ liệu sinh bởi simulator (có thể vài GB), không commit
 data/
+
+# Tài liệu cá nhân TV2 (không commit / không push)
+docs/tv2_nhiem_vu_va_quy_trinh.md
+
