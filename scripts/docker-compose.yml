@@ -100,6 +100,24 @@ services:
       - kafka-2
       - kafka-3
 
+  # Collector API (TV2): nhận event từ web/app/simulator, kiểm schema, đẩy vào Kafka hoặc DLQ
+  collector:
+    build: ../collector
+    container_name: collector
+    ports:
+      # máy nào chạy cùng web The Sweets (mobile_backend chiếm 8000) thì đặt COLLECTOR_PORT=8010 trong scripts/.env
+      - "${COLLECTOR_PORT:-8000}:8000"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka-1:29092,kafka-2:29092,kafka-3:29092"
+      TOPIC_PREFIX: "bakery"
+    networks:
+      - kafka-net
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    restart: unless-stopped
+
 volumes:
   kafka-data-1:
   kafka-data-2:

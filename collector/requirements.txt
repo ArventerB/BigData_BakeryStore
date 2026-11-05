@@ -1,0 +1,8 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.0
+# Dùng confluent-kafka (librdkafka) giống simulator của TV3: nhanh hơn kafka-python và tự kết nối lại khi broker chết
+confluent-kafka>=2.3
+python-dotenv>=1.0
+# chỉ dùng cho test_collector.py
+requests>=2.31
